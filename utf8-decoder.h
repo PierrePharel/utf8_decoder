@@ -1,72 +1,93 @@
 #ifndef UTF8_DECODER
 #define UTF8_DECODER
 
-#define _0_32b 0b0000'0000'0000'0000'0000'0000'0000'0000
-#define _1_32b 0b0000'0000'0000'0000'0000'0000'0000'0001
-#define _2_32b 0b0000'0000'0000'0000'0000'0000'0000'0010
-#define _3_32b 0b0000'0000'0000'0000'0000'0000'0000'0011
-#define _4_32b 0b0000'0000'0000'0000'0000'0000'0000'0100
-#define _5_32b 0b0000'0000'0000'0000'0000'0000'0000'0101
-#define _6_32b 0b0000'0000'0000'0000'0000'0000'0000'0110
-#define _7_32b 0b0000'0000'0000'0000'0000'0000'0000'0111
-#define _8_32b 0b0000'0000'0000'0000'0000'0000'0000'1000
-#define _9_32b 0b0000'0000'0000'0000'0000'0000'0000'1001
-#define _A_32b 0b0000'0000'0000'0000'0000'0000'0000'1010
-#define _B_32b 0b0000'0000'0000'0000'0000'0000'0000'1011
-#define _C_32b 0b0000'0000'0000'0000'0000'0000'0000'1100
-#define _D_32b 0b0000'0000'0000'0000'0000'0000'0000'1101
-#define _E_32b 0b0000'0000'0000'0000'0000'0000'0000'1110
-#define _F_32b 0b0000'0000'0000'0000'0000'0000'0000'1111
+#define _0 0b0000'0000'0000'0000'0000'0000'0000'0000
+#define _1 0b0000'0000'0000'0000'0000'0000'0000'0001
+#define _2 0b0000'0000'0000'0000'0000'0000'0000'0010
+#define _3 0b0000'0000'0000'0000'0000'0000'0000'0011
+#define _4 0b0000'0000'0000'0000'0000'0000'0000'0100
+#define _5 0b0000'0000'0000'0000'0000'0000'0000'0101
+#define _6 0b0000'0000'0000'0000'0000'0000'0000'0110
+#define _7 0b0000'0000'0000'0000'0000'0000'0000'0111
+#define _8 0b0000'0000'0000'0000'0000'0000'0000'1000
+#define _9 0b0000'0000'0000'0000'0000'0000'0000'1001
+#define _A 0b0000'0000'0000'0000'0000'0000'0000'1010
+#define _B 0b0000'0000'0000'0000'0000'0000'0000'1011
+#define _C 0b0000'0000'0000'0000'0000'0000'0000'1100
+#define _D 0b0000'0000'0000'0000'0000'0000'0000'1101
+#define _E 0b0000'0000'0000'0000'0000'0000'0000'1110
+#define _F 0b0000'0000'0000'0000'0000'0000'0000'1111
 
-#define US_ASCII 0x0
+// first char
 #define LATIN 0xc0
 #define BASIC_MULTI_LANG 0xe0
 #define OTHERS 0xf0
 
-int32_t utf8type(const void *str);
-void utf8construct(const char *src, char *dst);
+#define END ('\0')
 
-int32_t utf8type(const void *str)
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+
+enum UTF8Type
 {
-    int32_t type = 0;
+    USASCII,
+    Latin,
+    BasicMultiLang,
+    Others,
+    Unknown
+};
+typedef enum UTF8Type UTF8Type_t;
+
+UTF8Type_t utf8type(const void *str);
+void utf8layout(const char *src, char *dst, UTF8Type_t type);
+void bytes_to_str(const char *src, char *buf);
+void to_type(const char *buf);
+void utf8decode(const char *src, char *dst);
+
+UTF8Type_t utf8type(const void *str)
+{
+    UTF8Type_t type;
+    int32_t codepoint = 0;
     short shift = 0;
     const char *s = (const char*)str;
 
-    while(*s != '\0')
+    while(*s != END)
     {
         switch(*s)
         {
-            case '0': type = ((type << shift) | _0_32b);
+            case '0': codepoint = ((codepoint << shift) | _0);
                     break;
-            case '1': type = ((type << shift) | _1_32b);
+            case '1': codepoint = ((codepoint << shift) | _1);
                     break;
-            case '2': type = ((type << shift) | _2_32b);
+            case '2': codepoint = ((codepoint << shift) | _2);
                     break;
-            case '3': type = ((type << shift) | _3_32b);
+            case '3': codepoint = ((codepoint << shift) | _3);
                     break;
-            case '4': type = ((type << shift) | _4_32b);
+            case '4': codepoint = ((codepoint << shift) | _4);
                     break;
-            case '5': type = ((type << shift) | _5_32b);
+            case '5': codepoint = ((codepoint << shift) | _5);
                     break;
-            case '6': type = ((type << shift) | _6_32b);
+            case '6': codepoint = ((codepoint << shift) | _6);
                     break;
-            case '7': type = ((type << shift) | _7_32b);
+            case '7': codepoint = ((codepoint << shift) | _7);
                     break;
-            case '8': type = ((type << shift) | _8_32b);
+            case '8': codepoint = ((codepoint << shift) | _8);
                     break;
-            case '9': type = ((type << shift) | _9_32b);
+            case '9': codepoint = ((codepoint << shift) | _9);
                     break;
-            case 'A': type = ((type << shift) | _A_32b);
+            case 'A': codepoint = ((codepoint << shift) | _A);
                     break;
-            case 'B': type = ((type << shift) | _B_32b);
+            case 'B': codepoint = ((codepoint << shift) | _B);
                     break;
-            case 'C': type = ((type << shift) | _C_32b);
+            case 'C': codepoint = ((codepoint << shift) | _C);
                     break;
-            case 'D': type = ((type << shift) | _D_32b);
+            case 'D': codepoint = ((codepoint << shift) | _D);
                     break;
-            case 'E': type = ((type << shift) | _E_32b);
+            case 'E': codepoint = ((codepoint << shift) | _E);
                     break;
-            case 'F': type = ((type << shift) | _F_32b);
+            case 'F': codepoint = ((codepoint << shift) | _F);
                     break;
         }
 
@@ -74,36 +95,83 @@ int32_t utf8type(const void *str)
         ++ s;
     }
 
+    if(codepoint <= 0x007f)
+        type = USASCII;
+    else if(codepoint > 0x007f && codepoint <= 0x07ff)
+        type = Latin;
+    else if(codepoint > 0x07ff && codepoint <= 0xffff)
+        type = BasicMultiLang;
+    else if(codepoint > 0xffff && codepoint <= 0x10ffff)
+        type = Others;
+    else
+        type = Unknown;
+
     return type;
 }
 
-void utf8construct(const char *src, char *dst)
+void bytes_to_str(const char *src, char *buf)
 {
-    const int32_t type = utf8type(src);
+    for(short i = 0; i < strlen(src); ++ i)
+        switch(src[i])
+        {
+            case '0': strcat(buf, "0000");
+                break;
+            case '1': strcat(buf, "0001");
+                break;
+            case '2': strcat(buf, "0010");
+                break;
+            case '3': strcat(buf, "0011");
+                break;
+            case '4': strcat(buf, "0100");
+                break;
+            case '5': strcat(buf, "0101");
+                break;
+            case '6': strcat(buf, "0110");
+                break;
+            case '7': strcat(buf, "0111");
+                break;
+            case '8': strcat(buf, "1000");
+                break;
+            case '9': strcat(buf, "1001");
+                break;
+            case 'A': strcat(buf, "1010");
+                break;
+            case 'B': strcat(buf, "1011");
+                break;
+            case 'C': strcat(buf, "1100");
+                break;
+            case 'D': strcat(buf, "1101");
+                break;
+            case 'E': strcat(buf, "1110");
+                break;
+            case 'F': strcat(buf, "1111");
+                break;
+        }
+}
 
-    if(type <= 0x007f) // US ASCII
+void to_type(char *buf, UTF8Type_t type)
+{
+    
+}
+
+void utf8layout(const char *src, char *dst, UTF8Type_t type)
+{
+    char buf[32] = {0};
+
+    bytes_to_str(src, buf);
+    switch(type)
     {
-        printf("US ASCII\n");
-        dst[0] = type;
-        dst[1] = '\0';
+        case Latin:
+
+            break;
     }
-    else if(type > 0x007f && type <= 0x07ff) // Latin
-    {
-        printf("LATIN\n");
-    }
-    else if(type > 0x07ff && type <= 0xffff) // Basic multi languages (Chinese, Japanese,...)
-    {
-        printf("BML\n");
-    }
-    else if(type > 0xffff && type <= 0x10ffff) // Others
-    {
-        printf("OTHERS\n");
-    }
-    else // Unknown
-    {
-        printf("Unknown\n");
-        dst = NULL;
-    }
+}
+
+void utf8decode(const char *src, char *dst)
+{
+    const UTF8Type_t type = utf8type(src);
+
+    
 }
 
 #endif
