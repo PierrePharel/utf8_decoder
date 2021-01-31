@@ -1,6 +1,10 @@
 #ifndef UTF8_DECODER
 #define UTF8_DECODER
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #define _0 0b0000'0000'0000'0000'0000'0000'0000'0000
 #define _1 0b0000'0000'0000'0000'0000'0000'0000'0001
 #define _2 0b0000'0000'0000'0000'0000'0000'0000'0010
@@ -133,8 +137,11 @@ UTF8Type_t utf8type(const char *str)
 
 void bytes_to_str(const char *src, char *buf)
 {
-    for(short i = 0; i < strlen(src); ++ i)
-        switch(src[i])
+    const char *s = src;
+
+    while(*s != END)
+    {
+        switch(*s)
         {
             case '0': strcat(buf, "0000");
                 break;
@@ -169,31 +176,73 @@ void bytes_to_str(const char *src, char *buf)
             case 'F': strcat(buf, "1111");
                 break;
         }
+
+        ++ s;
+    }
 }
 
-void to_type(char *buf, UTF8Type_t type)
+void chr_to_str(char *buf, UTF8Type_t type)
 {
-    
+    char tmp[33];
+
+    switch(type)
+    {
+        case Latin:
+        {
+            copy(5, buf, tmp);
+            Clear(buf);
+            append(buf, LATIN);
+            for(short i = 0; tmp[i] != END; ++ i)
+            {
+                if(i <= 4) // first char
+                    buf[i + 3] = tmp[i];
+                else if(i == 5) // transition
+                {
+                    buf[i + 3] = END;
+                    append(buf, EACH_CHR_BEGIN);
+                    buf[i + 5] = tmp[i];
+                    buf[i + 6] = END;
+                }
+                else // last char
+                {
+                    buf[i + 5] = tmp[i];
+                    buf[i + 6] = END;
+                }
+            }
+            break;
+        }
+        case BasicMultiLang:
+        {
+            break;
+        }
+    }
+
+    printf("buf at end : %s\n", buf);
 }
 
 void utf8layout(const char *src, char *dst, UTF8Type_t type)
 {
-    char buf[32] = {0};
+    char buf[33] = {0};
 
     bytes_to_str(src, buf);
-    switch(type)
-    {
-        case Latin:
+    chr_to_str(buf, type);
 
-            break;
-    }
 }
 
 void utf8decode(const char *src, char *dst)
 {
     const UTF8Type_t type = utf8type(src);
 
-    
+    switch(type)
+    {
+        case USASCII:
+            dst[0] = utf8type(src);
+            dst[1] = END;
+            break;
+        case Latin:
+
+            break;
+    }
 }
 
 #endif
