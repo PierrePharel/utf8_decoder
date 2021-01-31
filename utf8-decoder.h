@@ -40,18 +40,42 @@ enum UTF8Type
 };
 typedef enum UTF8Type UTF8Type_t;
 
-UTF8Type_t utf8type(const void *str);
+UTF8Type_t utf8type(const char *str);
 void utf8layout(const char *src, char *dst, UTF8Type_t type);
 void bytes_to_str(const char *src, char *buf);
-void to_type(const char *buf);
+void chr_to_str(char *buf);
 void utf8decode(const char *src, char *dst);
 
-UTF8Type_t utf8type(const void *str)
+/* ghost functions */
+void copy(short begin, const char *src, char *dst)
+{
+    const char *s = (src + begin);
+    short i = 0;
+
+    for(; *s != END; ++ i, ++ s)
+        dst[i] = *s;
+
+    dst[i] = END;
+}
+
+void append(char *buf, const char *str)
+{
+    short i = 0;
+
+    for(char *s = buf; *s != END; ++ s, ++ i);
+
+    for(const char *s = str; *s != END; ++ s, ++i)
+        buf[i] = *s;
+
+    buf[i] = END;
+}
+
+UTF8Type_t utf8type(const char *str)
 {
     UTF8Type_t type;
     int32_t codepoint = 0;
     short shift = 0;
-    const char *s = (const char*)str;
+    const char *s = str;
 
     while(*s != END)
     {
