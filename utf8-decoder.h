@@ -18,17 +18,15 @@
 #define _E 0b0000'0000'0000'0000'0000'0000'0000'1110
 #define _F 0b0000'0000'0000'0000'0000'0000'0000'1111
 
-// first char
-#define LATIN 0xc0
-#define BASIC_MULTI_LANG 0xe0
-#define OTHERS 0xf0
+// bytes beginning
+#define LATIN ("110")
+#define BASIC_MULTI_LANG ("1110")
+#define OTHERS ("11110")
+#define EACH_CHR_BEGIN ("10")
 
 #define END ('\0')
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
+#define Clear(s) s[0] = END;
 
 enum UTF8Type
 {
