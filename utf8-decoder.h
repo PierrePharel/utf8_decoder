@@ -25,23 +25,6 @@
 
 #include <stdlib.h>
 
-#define _0 0b0000'0000'0000'0000'0000'0000'0000'0000
-#define _1 0b0000'0000'0000'0000'0000'0000'0000'0001
-#define _2 0b0000'0000'0000'0000'0000'0000'0000'0010
-#define _3 0b0000'0000'0000'0000'0000'0000'0000'0011
-#define _4 0b0000'0000'0000'0000'0000'0000'0000'0100
-#define _5 0b0000'0000'0000'0000'0000'0000'0000'0101
-#define _6 0b0000'0000'0000'0000'0000'0000'0000'0110
-#define _7 0b0000'0000'0000'0000'0000'0000'0000'0111
-#define _8 0b0000'0000'0000'0000'0000'0000'0000'1000
-#define _9 0b0000'0000'0000'0000'0000'0000'0000'1001
-#define _A 0b0000'0000'0000'0000'0000'0000'0000'1010
-#define _B 0b0000'0000'0000'0000'0000'0000'0000'1011
-#define _C 0b0000'0000'0000'0000'0000'0000'0000'1100
-#define _D 0b0000'0000'0000'0000'0000'0000'0000'1101
-#define _E 0b0000'0000'0000'0000'0000'0000'0000'1110
-#define _F 0b0000'0000'0000'0000'0000'0000'0000'1111
-
 // str bytes beginning
 #define LATIN_BEGIN ("110")
 #define BASIC_MUL_LANG_BEGIN ("1110")
@@ -102,37 +85,24 @@ UTF8Type_t utf8type(const char *hex_str)
     {
         switch(*s)
         {
-            case '0': codepoint = ((codepoint << shift) | _0);
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9': codepoint = ((codepoint << shift) | (*s - '0'));
                     break;
-            case '1': codepoint = ((codepoint << shift) | _1);
-                    break;
-            case '2': codepoint = ((codepoint << shift) | _2);
-                    break;
-            case '3': codepoint = ((codepoint << shift) | _3);
-                    break;
-            case '4': codepoint = ((codepoint << shift) | _4);
-                    break;
-            case '5': codepoint = ((codepoint << shift) | _5);
-                    break;
-            case '6': codepoint = ((codepoint << shift) | _6);
-                    break;
-            case '7': codepoint = ((codepoint << shift) | _7);
-                    break;
-            case '8': codepoint = ((codepoint << shift) | _8);
-                    break;
-            case '9': codepoint = ((codepoint << shift) | _9);
-                    break;
-            case 'A': codepoint = ((codepoint << shift) | _A);
-                    break;
-            case 'B': codepoint = ((codepoint << shift) | _B);
-                    break;
-            case 'C': codepoint = ((codepoint << shift) | _C);
-                    break;
-            case 'D': codepoint = ((codepoint << shift) | _D);
-                    break;
-            case 'E': codepoint = ((codepoint << shift) | _E);
-                    break;
-            case 'F': codepoint = ((codepoint << shift) | _F);
+
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F': codepoint = ((codepoint << shift) | (*s - 'A' + 10));
                     break;
         }
 
@@ -327,11 +297,10 @@ void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
         {
             case '0':
                 utf8_str[j] <<= 1;
-                utf8_str[j] |= 0b0000'0000;
                 break;
             case '1':
                 utf8_str[j] <<= 1;
-                utf8_str[j] |= 0b0000'0001;
+                utf8_str[j] |= 0b0001;
                 break;
         }
 
