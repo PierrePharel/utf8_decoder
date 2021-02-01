@@ -5,8 +5,8 @@ A simple one header solution to decode hex utf8 string in C and C++.
 ## Usage
 
 ```c
+#include <stdio.h>
 #include "utf8-decoder.h"
-
 
 int main(void)
 {
