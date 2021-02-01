@@ -42,7 +42,7 @@ UTF8Type_t utf8type(const char *hex_str);
 void hex_to_bytes_str(const char *hex_str, char *bytes_str);
 void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str);
 void utf8decode(const char *src, char *dst);
-void str_to_bit_decoder(const char *utf8_chr_str, char *utf8_str);
+void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
 
 /* ghost functions */
 void copy(const short begin, char* const src, char *dst)
@@ -294,7 +294,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
     }
 }
 
-void str_to_bit_decoder(const char *utf8_chr_str, char *utf8_str)
+void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
 {
     short i = 0;
     short j = 0;
@@ -338,7 +338,7 @@ void utf8decode(const char *hex_str, char *utf8_str)
         case Others:
             hex_to_bytes_str(hex_str, utf8_chr_str);
             bytes_to_utf8chr_str(type, utf8_chr_str);
-            str_to_bit_decoder(utf8_chr_str, utf8_str);
+            str_to_bit_decoded(utf8_chr_str, utf8_str);
             break;
         case OutRange:
             utf8_str[0] = END;
