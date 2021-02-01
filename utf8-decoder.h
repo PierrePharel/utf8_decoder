@@ -50,7 +50,7 @@ void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
 void utf8decode(const char *src, char *dst);
 
 /* ghost functions */
-void copy(const short begin, char* const src, char *dst)
+void utf8d_copy(const short begin, char* const src, char *dst)
 {
     const char *s = (src + begin);
     short i = 0;
@@ -62,7 +62,7 @@ void copy(const short begin, char* const src, char *dst)
     src[0] = STR_END;
 }
 
-void append(char *dst, const char *str)
+void utf8d_append(char *dst, const char *str)
 {
     short i = 0;
 
@@ -104,6 +104,14 @@ UTF8Type_t utf8type(const char *hex_str)
             case 'E':
             case 'F': codepoint = ((codepoint << shift) | (*s - 'A' + 10));
                     break;
+
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f': codepoint = ((codepoint << shift) | (*s - 'a' + 10));
+                    break;
         }
 
         shift = 4;
@@ -132,37 +140,43 @@ void hex_to_bytes_str(const char *hex_str, char *bytes_str)
     {
         switch(*s)
         {
-            case '0': append(bytes_str, "0000");
+            case '0': utf8d_append(bytes_str, "0000");
                 break;
-            case '1': append(bytes_str, "0001");
+            case '1': utf8d_append(bytes_str, "0001");
                 break;
-            case '2': append(bytes_str, "0010");
+            case '2': utf8d_append(bytes_str, "0010");
                 break;
-            case '3': append(bytes_str, "0011");
+            case '3': utf8d_append(bytes_str, "0011");
                 break;
-            case '4': append(bytes_str, "0100");
+            case '4': utf8d_append(bytes_str, "0100");
                 break;
-            case '5': append(bytes_str, "0101");
+            case '5': utf8d_append(bytes_str, "0101");
                 break;
-            case '6': append(bytes_str, "0110");
+            case '6': utf8d_append(bytes_str, "0110");
                 break;
-            case '7': append(bytes_str, "0111");
+            case '7': utf8d_append(bytes_str, "0111");
                 break;
-            case '8': append(bytes_str, "1000");
+            case '8': utf8d_append(bytes_str, "1000");
                 break;
-            case '9': append(bytes_str, "1001");
+            case '9': utf8d_append(bytes_str, "1001");
                 break;
-            case 'A': append(bytes_str, "1010");
+            case 'a':
+            case 'A': utf8d_append(bytes_str, "1010");
                 break;
-            case 'B': append(bytes_str, "1011");
+            case 'b':
+            case 'B': utf8d_append(bytes_str, "1011");
                 break;
-            case 'C': append(bytes_str, "1100");
+            case 'c':
+            case 'C': utf8d_append(bytes_str, "1100");
                 break;
-            case 'D': append(bytes_str, "1101");
+            case 'd':
+            case 'D': utf8d_append(bytes_str, "1101");
                 break;
-            case 'E': append(bytes_str, "1110");
+            case 'e':
+            case 'E': utf8d_append(bytes_str, "1110");
                 break;
-            case 'F': append(bytes_str, "1111");
+            case 'f':
+            case 'F': utf8d_append(bytes_str, "1111");
                 break;
         }
 
@@ -178,8 +192,8 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
     {
         case Latin:
         {
-            copy(5, utf8_chr_str, bytes_str);
-            append(utf8_chr_str, LATIN_BEGIN);
+            utf8d_copy(5, utf8_chr_str, bytes_str);
+            utf8d_append(utf8_chr_str, LATIN_BEGIN);
             for(short i = 0; bytes_str[i] != STR_END; ++ i)
                 if(i < 5) // first char
                 {
@@ -203,8 +217,8 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
 
         case BasicMultiLang:
         {
-            copy(0, utf8_chr_str, bytes_str);
-            append(utf8_chr_str, BASIC_MUL_LANG_BEGIN);
+            utf8d_copy(0, utf8_chr_str, bytes_str);
+            utf8d_append(utf8_chr_str, BASIC_MUL_LANG_BEGIN);
             for(short i = 0; bytes_str[i] != STR_END; ++ i)
                 if(i < 4) // first char
                 {
@@ -239,8 +253,8 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
 
         case Others:
         {
-            copy(0, utf8_chr_str, bytes_str);
-            append(utf8_chr_str, OTHERS_PLANESU_BEGIN);
+            utf8d_copy(0, utf8_chr_str, bytes_str);
+            utf8d_append(utf8_chr_str, OTHERS_PLANESU_BEGIN);
             for(short i = 0; bytes_str[i] != STR_END; ++ i)
                 if(i < 2) // first char
                 {
@@ -293,16 +307,8 @@ void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
 
     while(utf8_chr_str[i] != STR_END)
     {
-        switch(utf8_chr_str[i])
-        {
-            case '0':
-                utf8_str[j] <<= 1;
-                break;
-            case '1':
-                utf8_str[j] <<= 1;
-                utf8_str[j] |= 0b0001;
-                break;
-        }
+        utf8_str[j] <<= 1;
+        utf8_str[j] |= utf8_chr_str[i] - '0';
 
         if(((i + 1) % 8) == 0)
             ++ j;
@@ -336,5 +342,11 @@ void utf8decode(const char *hex_str, char *utf8_str)
             break;
     }
 }
+
+#undef STR_END
+#undef LATIN_BEGIN
+#undef BASIC_MUL_LANG_BEGIN
+#undef OTHERS_PLANESU_BEGIN
+#undef SCY_CHR_BEGIN
 
 #endif
