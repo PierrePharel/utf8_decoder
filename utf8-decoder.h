@@ -1,3 +1,25 @@
+// The MIT License (MIT)
+
+// Copyright (c) 2021 Pierre Pharel Angoro Abiaga
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 #ifndef UTF8_DECODER
 #define UTF8_DECODER
 
@@ -23,7 +45,7 @@
 // str bytes beginning
 #define LATIN_BEGIN ("110")
 #define BASIC_MUL_LANG_BEGIN ("1110")
-#define OTHERS_PLANESU_BEGIN ("111100")
+#define OTHERS_PLANESU_BEGIN ("111100") // must be 0xf0 (0b11110xxx), but '0' add for 32bit align
 #define SCY_CHR_BEGIN ("10")
 
 #define END ('\0')
@@ -41,8 +63,8 @@ typedef enum UTF8Type UTF8Type_t;
 UTF8Type_t utf8type(const char *hex_str);
 void hex_to_bytes_str(const char *hex_str, char *bytes_str);
 void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str);
-void utf8decode(const char *src, char *dst);
 void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
+void utf8decode(const char *src, char *dst);
 
 /* ghost functions */
 void copy(const short begin, char* const src, char *dst)
