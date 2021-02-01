@@ -202,7 +202,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 5) // transition
                 {
-                    append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 5] = bytes_str[i];
                     utf8_chr_str[i + 6] = STR_END;
                 }
@@ -227,7 +227,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 4) // transition
                 {
-                    append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 6] = bytes_str[i];
                     utf8_chr_str[i + 7] = STR_END;
                 }
@@ -238,7 +238,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 10) // transition
                 {
-                    append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 8] = bytes_str[i];
                     utf8_chr_str[i + 9] = STR_END;
                 }
@@ -263,7 +263,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 2) // transition
                 {
-                    append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 8] = bytes_str[i];
                     utf8_chr_str[i + 9] = STR_END;
                 }
@@ -274,7 +274,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 8) // transition
                 {
-                    append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 10] = bytes_str[i];
                     utf8_chr_str[i + 11] = STR_END;
                 }
@@ -285,7 +285,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 14) // transition
                 {
-                    append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 12] = bytes_str[i];
                     utf8_chr_str[i + 13] = STR_END;
                 }
