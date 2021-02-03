@@ -23,6 +23,10 @@
 #ifndef UTF8_DECODER
 #define UTF8_DECODER
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 
 // str bytes beginning
@@ -43,14 +47,14 @@ enum UTF8Type
 };
 typedef enum UTF8Type UTF8Type_t;
 
-UTF8Type_t utf8type(const char *hex_str);
-void hex_to_bytes_str(const char *hex_str, char *bytes_str);
-void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str);
-void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
-void utf8decode(const char *src, char *dst);
+static UTF8Type_t utf8type(const char *hex_str);
+static void hex_to_bytes_str(const char *hex_str, char *bytes_str);
+static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str);
+static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
+static void utf8decode(const char *src, char *dst);
 
 /* ghost functions */
-void utf8d_copy(const short begin, char* const src, char *dst)
+static void utf8d_copy(const short begin, char* const src, char *dst)
 {
     const char *s = (src + begin);
     short i = 0;
@@ -62,7 +66,7 @@ void utf8d_copy(const short begin, char* const src, char *dst)
     src[0] = STR_END;
 }
 
-void utf8d_append(char *dst, const char *str)
+static void utf8d_append(char *dst, const char *str)
 {
     short i = 0;
 
@@ -74,7 +78,7 @@ void utf8d_append(char *dst, const char *str)
     dst[i] = STR_END;
 }
 
-UTF8Type_t utf8type(const char *hex_str)
+static UTF8Type_t utf8type(const char *hex_str)
 {
     UTF8Type_t type;
     int32_t codepoint = 0;
@@ -132,7 +136,7 @@ UTF8Type_t utf8type(const char *hex_str)
     return type;
 }
 
-void hex_to_bytes_str(const char *hex_str, char *bytes_str)
+static void hex_to_bytes_str(const char *hex_str, char *bytes_str)
 {
     const char *s = hex_str;
 
@@ -184,7 +188,7 @@ void hex_to_bytes_str(const char *hex_str, char *bytes_str)
     }
 }
 
-void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
+static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
 {
     char bytes_str[33];
 
@@ -300,7 +304,7 @@ void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
     }
 }
 
-void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
+static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
 {
     short i = 0;
     short j = 0;
@@ -319,7 +323,7 @@ void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
     utf8_str[j + 1] = STR_END;
 }
 
-void utf8decode(const char *hex_str, char *utf8_str)
+static void utf8decode(const char *hex_str, char *utf8_str)
 {
     const UTF8Type_t type = utf8type(hex_str);
     char utf8_chr_str[33] = {0};
@@ -348,5 +352,9 @@ void utf8decode(const char *hex_str, char *utf8_str)
 #undef BASIC_MUL_LANG_BEGIN
 #undef OTHERS_PLANESU_BEGIN
 #undef SCY_CHR_BEGIN
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
