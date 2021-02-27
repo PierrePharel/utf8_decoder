@@ -332,21 +332,108 @@ static void utf8decode(const char *hex_str, char *utf8_str)
 
     switch(type)
     {
-        case USASCII:
+        case utf8_USASCII_t:
             utf8_str[0] = utf8type(hex_str);
             utf8_str[1] = STR_END;
             break;
-        case Latin:
-        case BasicMultiLang:
-        case Others:
+        case utf8_Latin_t:
+        case utf8_BasicMultiLang_t:
+        case utf8_Others_t:
             hex_to_bytes_str(hex_str, utf8_chr_str);
             bytes_to_utf8chr_str(type, utf8_chr_str);
             str_to_bit_decoded(utf8_chr_str, utf8_str);
             break;
-        case OutRange:
+        case utf8_OutRange_t:
             utf8_str[0] = STR_END;
             break;
     }
+}
+
+/* Bonus function */
+static short utf8valid(const char *str);
+
+static short utf8valid(const char *str)
+{
+    const char *s = str;
+
+    while('\0' != *s)
+    {
+        if(0xf0 == (0xf8 & *s))
+        {
+            // ensure each of the 3 following bytes in this 4-byte
+            // utf8 codepoint began with 0b10xxxxxx
+            if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])) || (0x80 != (0xc0 & s[3])))
+                return utf8_unknown_char;
+
+            // ensure that our utf8 codepoint ended after 4 bytes
+            if(0x80 == (0xc0 & s[4]))
+                return utf8_unknown_char;
+
+            // ensure that the top 5 bits of this 4-byte utf8
+            // codepoint were not 0, as then we could have used
+            // one of the smaller encodings
+            if((0 == (0x07 & s[0])) && (0 == (0x30 & s[1])))
+                return utf8_unknown_char;
+
+            // 4-byte utf8 code point (began with 0b11110xxx)
+            s += 4;
+        }
+        else if(0xe0 == (0xf0 & *s))
+        {
+            // ensure each of the 2 following bytes in this 3-byte
+            // utf8 codepoint began with 0b10xxxxxx
+            if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])))
+                return utf8_unknown_char;
+
+            // ensure that our utf8 codepoint ended after 3 bytes
+            if (0x80 == (0xc0 & s[3]))
+                return utf8_unknown_char;
+
+            // ensure that the top 5 bits of this 3-byte utf8
+            // codepoint were not 0, as then we could have used
+            // one of the smaller encodings
+            if((0 == (0x0f & s[0])) && (0 == (0x20 & s[1])))
+                return utf8_unknown_char;
+
+            // 3-byte utf8 code point (began with 0b1110xxxx)
+            s += 3;
+        }
+        else if (0xc0 == (0xe0 & *s))
+        {
+            // ensure the 1 following byte in this 2-byte
+            // utf8 codepoint began with 0b10xxxxxx
+            if (0x80 != (0xc0 & s[1])) {
+                return utf8_unknown_char;
+            }
+
+            // ensure that our utf8 codepoint ended after 2 bytes
+            if (0x80 == (0xc0 & s[2])) {
+                return utf8_unknown_char;
+            }
+
+            // ensure that the top 4 bits of this 2-byte utf8
+            // codepoint were not 0, as then we could have used
+            // one of the smaller encodings
+            if (0 == (0x1e & s[0])) {
+                return utf8_unknown_char;
+            }
+
+            // 2-byte utf8 code point (began with 0b110xxxxx)
+            s += 2;
+        }
+        else if (0x00 == (0x80 & *s))
+        {
+            // 1-byte ascii (began with 0b0xxxxxxx)
+            s += 1;
+        }
+        else
+        {
+            // we have an invalid 0b1xxxxxxx utf8 code point entry
+            return utf8_unknown_char;
+        }
+    }
+
+    return utf8_known_char;
 }
 
 #undef STR_END
