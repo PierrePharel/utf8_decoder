@@ -36,14 +36,16 @@ extern "C" {
 #define SCY_CHR_BEGIN ("10")
 
 #define STR_END ('\0')
+#define utf8_unknown_char 1
+#define utf8_known_char 0
 
 enum UTF8Type
 {
-    USASCII,
-    Latin,
-    BasicMultiLang,
-    Others,
-    OutRange
+    utf8_USASCII_t,
+    utf8_Latin_t,
+    utf8_BasicMultiLang_t,
+    utf8_Others_t,
+    utf8_OutRange_t
 };
 typedef enum UTF8Type UTF8Type_t;
 
@@ -123,15 +125,15 @@ static UTF8Type_t utf8type(const char *hex_str)
     }
 
     if(codepoint <= 0x007f)
-        type = USASCII;
+        type = utf8_USASCII_t;
     else if(codepoint > 0x007f && codepoint <= 0x07ff)
-        type = Latin;
+        type = utf8_Latin_t;
     else if(codepoint > 0x07ff && codepoint <= 0xffff)
-        type = BasicMultiLang;
+        type = utf8_BasicMultiLang_t;
     else if(codepoint > 0xffff && codepoint <= 0x10ffff)
-        type = Others;
+        type = utf8_Others_t;
     else
-        type = OutRange;
+        type = utf8_OutRange_t;
 
     return type;
 }
@@ -194,7 +196,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
 
     switch(type)
     {
-        case Latin:
+        case utf8_Latin_t:
         {
             utf8d_copy(5, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, LATIN_BEGIN);
@@ -219,7 +221,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
             break;
         }
 
-        case BasicMultiLang:
+        case utf8_BasicMultiLang_t:
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, BASIC_MUL_LANG_BEGIN);
@@ -255,7 +257,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
             break;
         }
 
-        case Others:
+        case utf8_Others_t:
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, OTHERS_PLANESU_BEGIN);
