@@ -386,7 +386,7 @@ static short utf8valid(const char *str)
                 return utf8_bad_char;
 
             // ensure that our utf8 codepoint ended after 3 bytes
-            if (0x80 == (0xc0 & s[3]))
+            if(0x80 == (0xc0 & s[3]))
                 return utf8_bad_char;
 
             // ensure that the top 5 bits of this 3-byte utf8
@@ -398,30 +398,27 @@ static short utf8valid(const char *str)
             // 3-byte utf8 code point (began with 0b1110xxxx)
             s += 3;
         }
-        else if (0xc0 == (0xe0 & *s))
+        else if(0xc0 == (0xe0 & *s))
         {
             // ensure the 1 following byte in this 2-byte
             // utf8 codepoint began with 0b10xxxxxx
-            if (0x80 != (0xc0 & s[1])) {
+            if(0x80 != (0xc0 & s[1]))
                 return utf8_bad_char;
-            }
 
             // ensure that our utf8 codepoint ended after 2 bytes
-            if (0x80 == (0xc0 & s[2])) {
+            if (0x80 == (0xc0 & s[2]))
                 return utf8_bad_char;
-            }
 
             // ensure that the top 4 bits of this 2-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
-            if (0 == (0x1e & s[0])) {
+            if(0 == (0x1e & s[0]))
                 return utf8_bad_char;
-            }
 
             // 2-byte utf8 code point (began with 0b110xxxxx)
             s += 2;
         }
-        else if (0x00 == (0x80 & *s))
+        else if(0x00 == (0x80 & *s))
         {
             // 1-byte ascii (began with 0b0xxxxxxx)
             s += 1;
