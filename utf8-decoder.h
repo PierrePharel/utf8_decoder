@@ -36,8 +36,8 @@ extern "C" {
 #define SCY_CHR_BEGIN ("10")
 
 #define STR_END ('\0')
-#define utf8_bad_str 1
-#define utf8_good_str 0
+#define utf8_bad_char 1
+#define utf8_good_char 0
 
 enum UTF8Type
 {
@@ -363,17 +363,17 @@ static short utf8valid(const char *str)
             // ensure each of the 3 following bytes in this 4-byte
             // utf8 codepoint began with 0b10xxxxxx
             if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])) || (0x80 != (0xc0 & s[3])))
-                return utf8_bad_str;
+                return utf8_bad_char;
 
             // ensure that our utf8 codepoint ended after 4 bytes
             if(0x80 == (0xc0 & s[4]))
-                return utf8_bad_str;
+                return utf8_bad_char;
 
             // ensure that the top 5 bits of this 4-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
             if((0 == (0x07 & s[0])) && (0 == (0x30 & s[1])))
-                return utf8_bad_str;
+                return utf8_bad_char;
 
             // 4-byte utf8 code point (began with 0b11110xxx)
             s += 4;
@@ -383,17 +383,17 @@ static short utf8valid(const char *str)
             // ensure each of the 2 following bytes in this 3-byte
             // utf8 codepoint began with 0b10xxxxxx
             if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])))
-                return utf8_bad_str;
+                return utf8_bad_char;
 
             // ensure that our utf8 codepoint ended after 3 bytes
             if (0x80 == (0xc0 & s[3]))
-                return utf8_bad_str;
+                return utf8_bad_char;
 
             // ensure that the top 5 bits of this 3-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
             if((0 == (0x0f & s[0])) && (0 == (0x20 & s[1])))
-                return utf8_bad_str;
+                return utf8_bad_char;
 
             // 3-byte utf8 code point (began with 0b1110xxxx)
             s += 3;
@@ -403,19 +403,19 @@ static short utf8valid(const char *str)
             // ensure the 1 following byte in this 2-byte
             // utf8 codepoint began with 0b10xxxxxx
             if (0x80 != (0xc0 & s[1])) {
-                return utf8_bad_str;
+                return utf8_bad_char;
             }
 
             // ensure that our utf8 codepoint ended after 2 bytes
             if (0x80 == (0xc0 & s[2])) {
-                return utf8_bad_str;
+                return utf8_bad_char;
             }
 
             // ensure that the top 4 bits of this 2-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
             if (0 == (0x1e & s[0])) {
-                return utf8_bad_str;
+                return utf8_bad_char;
             }
 
             // 2-byte utf8 code point (began with 0b110xxxxx)
@@ -429,11 +429,11 @@ static short utf8valid(const char *str)
         else
         {
             // we have an invalid 0b1xxxxxxx utf8 code point entry
-            return utf8_bad_str;
+            return utf8_bad_char;
         }
     }
 
-    return utf8_good_str;
+    return utf8_good_char;
 }
 
 #undef STR_END
