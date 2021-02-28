@@ -36,8 +36,8 @@ extern "C" {
 #define SCY_CHR_BEGIN ("10")
 
 #define STR_END ('\0')
-#define utf8_bad_char 1
-#define utf8_good_char 0
+#define utf8_bad_char 0
+#define utf8_good_char 1
 
 enum UTF8Type
 {
