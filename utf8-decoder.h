@@ -94,7 +94,7 @@ static UTF8Type_t utf8type(const char *hex_str)
     short shift = 0;
     const char *s = hex_str;
 
-    while(*s != STR_END)
+    while(*s != END)
     {
         switch(*s)
         {
@@ -149,7 +149,7 @@ static void hex_to_bytes_str(const char *hex_str, char *bytes_str)
 {
     const char *s = hex_str;
 
-    while(*s != STR_END)
+    while(*s != END)
     {
         switch(*s)
         {
@@ -207,22 +207,22 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
         {
             utf8d_copy(5, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, LATIN_BEGIN);
-            for(short i = 0; bytes_str[i] != STR_END; ++ i)
+            for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 5) // first char
                 {
                     utf8_chr_str[i + 3] = bytes_str[i];
-                    utf8_chr_str[i + 4] = STR_END;
+                    utf8_chr_str[i + 4] = END;
                 }
                 else if(i == 5) // transition
                 {
                     utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 5] = bytes_str[i];
-                    utf8_chr_str[i + 6] = STR_END;
+                    utf8_chr_str[i + 6] = END;
                 }
                 else // last char
                 {
                     utf8_chr_str[i + 5] = bytes_str[i];
-                    utf8_chr_str[i + 6] = STR_END;
+                    utf8_chr_str[i + 6] = END;
                 }
 
             break;
@@ -232,33 +232,33 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, BASIC_MUL_LANG_BEGIN);
-            for(short i = 0; bytes_str[i] != STR_END; ++ i)
+            for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 4) // first char
                 {
                     utf8_chr_str[i + 4] = bytes_str[i];
-                    utf8_chr_str[i + 5] = STR_END;
+                    utf8_chr_str[i + 5] = END;
                 }
                 else if(i == 4) // transition
                 {
                     utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 6] = bytes_str[i];
-                    utf8_chr_str[i + 7] = STR_END;
+                    utf8_chr_str[i + 7] = END;
                 }
                 else if(i > 4 && i < 10) // second char
                 {
                     utf8_chr_str[i + 6] = bytes_str[i];
-                    utf8_chr_str[i + 7] = STR_END;
+                    utf8_chr_str[i + 7] = END;
                 }
                 else if(i == 10) // transition
                 {
                     utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = STR_END;
+                    utf8_chr_str[i + 9] = END;
                 }
                 else // last char
                 {
                     utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = STR_END;
+                    utf8_chr_str[i + 9] = END;
                 }
 
             break;
@@ -267,45 +267,45 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
         case utf8_Others_t:
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
-            utf8d_append(utf8_chr_str, OTHERS_PLANESU_BEGIN);
-            for(short i = 0; bytes_str[i] != STR_END; ++ i)
+            utf8d_append(utf8_chr_str, OTHERS_PLANES_UNICODE_BEGIN);
+            for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 2) // first char
                 {
                     utf8_chr_str[i + 6] = bytes_str[i];
-                    utf8_chr_str[i + 7] = STR_END;
+                    utf8_chr_str[i + 7] = END;
                 }
                 else if(i == 2) // transition
                 {
                     utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = STR_END;
+                    utf8_chr_str[i + 9] = END;
                 }
                 else if(i > 2 && i < 8)
                 {
                     utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = STR_END;
+                    utf8_chr_str[i + 9] = END;
                 }
                 else if(i == 8) // transition
                 {
                     utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 10] = bytes_str[i];
-                    utf8_chr_str[i + 11] = STR_END;
+                    utf8_chr_str[i + 11] = END;
                 }
                 else if(i > 8 && i < 14)
                 {
                     utf8_chr_str[i + 10] = bytes_str[i];
-                    utf8_chr_str[i + 11] = STR_END;
+                    utf8_chr_str[i + 11] = END;
                 }
                 else if(i == 14) // transition
                 {
                     utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
                     utf8_chr_str[i + 12] = bytes_str[i];
-                    utf8_chr_str[i + 13] = STR_END;
+                    utf8_chr_str[i + 13] = END;
                 }
                 else // last char
                 {
                     utf8_chr_str[i + 12] = bytes_str[i];
-                    utf8_chr_str[i + 13] = STR_END;
+                    utf8_chr_str[i + 13] = END;
                 }
 
             break;
@@ -318,7 +318,7 @@ static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
     short i = 0;
     short j = 0;
 
-    while(utf8_chr_str[i] != STR_END)
+    while(utf8_chr_str[i] != END)
     {
         utf8_str[j] <<= 1;
         utf8_str[j] |= utf8_chr_str[i] - '0';
@@ -446,14 +446,20 @@ static short utf8valid(const char *str)
     return utf8_good_char;
 }
 
-#undef STR_END
+/*
+static int32_t utf8ord(const char *str);
+{
+    int32_t ord = -1;
+
+
+
+    return ord;
+}*/
+
+#undef END
 #undef LATIN_BEGIN
 #undef BASIC_MUL_LANG_BEGIN
-#undef OTHERS_PLANESU_BEGIN
+#undef OTHERS_PLANES_UNICODE_BEGIN
 #undef SCY_CHR_BEGIN
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #endif
