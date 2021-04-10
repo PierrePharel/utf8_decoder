@@ -460,5 +460,7 @@ static int32_t utf8ord(const char *str)
 #undef BASIC_MUL_LANG_BEGIN
 #undef OTHERS_PLANES_UNICODE_BEGIN
 #undef SCY_CHR_BEGIN
+#undef UTF8_BAD_CHAR;
+#undef UTF8_GOOD_CHAR;
 
 #endif
