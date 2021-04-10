@@ -24,9 +24,9 @@
 #define UTF8_DECODER
 
 #ifdef __cplusplus
-#define CAST(type, var) static_cast<type>(var)
+#define Cast(type, var) static_cast<type>(var)
 #else
-#define CAST(type, var) (type)var
+#define Cast(type, var) (type)var
 #endif
 
 #include <stdlib.h>
@@ -39,8 +39,8 @@
 #define SCY_CHR_BEGIN ("10")
 
 #define END ('\0')
-#define utf8_bad_char 0
-#define utf8_good_char 1
+#define UTF8_BAD_CHAR 0
+#define UTF8_GOOD_CHAR 1
 
 typedef enum
 {
@@ -60,6 +60,10 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str);
 static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
 
 static char *utf8decode(const char *hex_str);
+
+static short utf8valid(const char *str);
+
+static int32_t utf8ord(const char *str);
 
 /* ghost functions */
 
@@ -356,14 +360,8 @@ static char *utf8decode(const char *hex_str)
             break;
     }
 
-    return strcpy(CAST(char*, calloc(5, sizeof(char))), buf);
+    return strcpy(Cast(char*, calloc(5, sizeof(char))), buf);
 }
-
-/* Bonus function */
-
-static short utf8valid(const char *str);
-
-static int32_t utf8ord(const char *str);
 
 static short utf8valid(const char *str)
 {
@@ -376,17 +374,17 @@ static short utf8valid(const char *str)
             // ensure each of the 3 following bytes in this 4-byte
             // utf8 codepoint began with 0b10xxxxxx
             if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])) || (0x80 != (0xc0 & s[3])))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // ensure that our utf8 codepoint ended after 4 bytes
             if(0x80 == (0xc0 & s[4]))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // ensure that the top 5 bits of this 4-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
             if((0 == (0x07 & s[0])) && (0 == (0x30 & s[1])))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // 4-byte utf8 code point (began with 0b11110xxx)
             s += 4;
@@ -396,17 +394,17 @@ static short utf8valid(const char *str)
             // ensure each of the 2 following bytes in this 3-byte
             // utf8 codepoint began with 0b10xxxxxx
             if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // ensure that our utf8 codepoint ended after 3 bytes
             if(0x80 == (0xc0 & s[3]))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // ensure that the top 5 bits of this 3-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
             if((0 == (0x0f & s[0])) && (0 == (0x20 & s[1])))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // 3-byte utf8 code point (began with 0b1110xxxx)
             s += 3;
@@ -416,17 +414,17 @@ static short utf8valid(const char *str)
             // ensure the 1 following byte in this 2-byte
             // utf8 codepoint began with 0b10xxxxxx
             if(0x80 != (0xc0 & s[1]))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // ensure that our utf8 codepoint ended after 2 bytes
-            if (0x80 == (0xc0 & s[2]))
-                return utf8_bad_char;
+            if(0x80 == (0xc0 & s[2]))
+                return UTF8_BAD_CHAR;
 
             // ensure that the top 4 bits of this 2-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
             if(0 == (0x1e & s[0]))
-                return utf8_bad_char;
+                return UTF8_BAD_CHAR;
 
             // 2-byte utf8 code point (began with 0b110xxxxx)
             s += 2;
@@ -439,22 +437,23 @@ static short utf8valid(const char *str)
         else
         {
             // we have an invalid 0b1xxxxxxx utf8 code point entry
-            return utf8_bad_char;
+            return UTF8_BAD_CHAR;
         }
     }
 
-    return utf8_good_char;
+    return UTF8_GOOD_CHAR;
 }
 
-/*
-static int32_t utf8ord(const char *str);
+#include <stdio.h>
+
+static int32_t utf8ord(const char *str)
 {
     int32_t ord = -1;
 
-
+    printf("%d\n", strlen("~"));
 
     return ord;
-}*/
+}
 
 #undef END
 #undef LATIN_BEGIN
