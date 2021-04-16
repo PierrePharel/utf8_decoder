@@ -45,9 +45,9 @@
 typedef enum
 {
     utf8_USASCII_t,
-    utf8_Latin_t,
-    utf8_BasicMultiLang_t,
-    utf8_Others_t,
+    utf8_LatinExtra_t,
+    utf8_BasicMultiLingual_t,
+    utf8_OthersPlanesUnicode_t,
     utf8_OutRange_t
 } UTF8Type_t;
 
@@ -138,11 +138,11 @@ static UTF8Type_t utf8type(const char *hex_str)
     if(codepoint <= 0x007f)
         type = utf8_USASCII_t;
     else if(codepoint > 0x007f && codepoint <= 0x07ff)
-        type = utf8_Latin_t;
+        type = utf8_LatinExtra_t;
     else if(codepoint > 0x07ff && codepoint <= 0xffff)
-        type = utf8_BasicMultiLang_t;
+        type = utf8_BasicMultiLingual_t;
     else if(codepoint > 0xffff && codepoint <= 0x10ffff)
-        type = utf8_Others_t;
+        type = utf8_OthersPlanesUnicode_t;
     else
         type = utf8_OutRange_t;
 
@@ -207,7 +207,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
 
     switch(type)
     {
-        case utf8_Latin_t:
+        case utf8_LatinExtra_t:
         {
             utf8d_copy(5, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, LATIN_EXTRA_BEGIN);
@@ -232,7 +232,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
             break;
         }
 
-        case utf8_BasicMultiLang_t:
+        case utf8_BasicMultiLingual_t:
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, BASIC_MULTILINGUAL_BEGIN);
@@ -268,7 +268,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
             break;
         }
 
-        case utf8_Others_t:
+        case utf8_OthersPlanesUnicode_t:
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, OTHERS_PLANES_UNICODE_BEGIN);
@@ -348,9 +348,9 @@ static char *utf8decode(const char *hex_str)
             buf[0] = utf8type(hex_str);
             buf[1] = END;
             break;
-        case utf8_Latin_t:
-        case utf8_BasicMultiLang_t:
-        case utf8_Others_t:
+        case utf8_LatinExtra_t:
+        case utf8_BasicMultiLingual_t:
+        case utf8_OthersPlanesUnicode_t:
             hex_to_bytes_str(hex_str, utf8_chr_str);
             bytes_to_utf8chr_str(type, utf8_chr_str);
             str_to_bit_decoded(utf8_chr_str, buf);
