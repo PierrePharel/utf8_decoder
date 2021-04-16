@@ -33,10 +33,10 @@
 #include <string.h>
 
 // str bytes beginning
-#define LATIN_BEGIN ("110")
-#define BASIC_MUL_LANG_BEGIN ("1110")
+#define LATIN_EXTRA_BEGIN ("110")
+#define BASIC_MULTILINGUAL_BEGIN ("1110")
 #define OTHERS_PLANES_UNICODE_BEGIN ("111100") // must be 0xf0 (0b11110xxx), but '0' add for 32bit align
-#define SCY_CHR_BEGIN ("10")
+#define SECONDARY_CHAR_BEGIN ("10")
 
 #define END ('\0')
 #define UTF8_BAD_CHAR 0
@@ -210,7 +210,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
         case utf8_Latin_t:
         {
             utf8d_copy(5, utf8_chr_str, bytes_str);
-            utf8d_append(utf8_chr_str, LATIN_BEGIN);
+            utf8d_append(utf8_chr_str, LATIN_EXTRA_BEGIN);
             for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 5) // first char
                 {
@@ -219,7 +219,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 5) // transition
                 {
-                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
                     utf8_chr_str[i + 5] = bytes_str[i];
                     utf8_chr_str[i + 6] = END;
                 }
@@ -235,7 +235,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
         case utf8_BasicMultiLang_t:
         {
             utf8d_copy(0, utf8_chr_str, bytes_str);
-            utf8d_append(utf8_chr_str, BASIC_MUL_LANG_BEGIN);
+            utf8d_append(utf8_chr_str, BASIC_MULTILINGUAL_BEGIN);
             for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 4) // first char
                 {
@@ -244,7 +244,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 4) // transition
                 {
-                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
                     utf8_chr_str[i + 6] = bytes_str[i];
                     utf8_chr_str[i + 7] = END;
                 }
@@ -255,7 +255,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 10) // transition
                 {
-                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
                     utf8_chr_str[i + 8] = bytes_str[i];
                     utf8_chr_str[i + 9] = END;
                 }
@@ -280,7 +280,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 2) // transition
                 {
-                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
                     utf8_chr_str[i + 8] = bytes_str[i];
                     utf8_chr_str[i + 9] = END;
                 }
@@ -291,7 +291,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 8) // transition
                 {
-                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
                     utf8_chr_str[i + 10] = bytes_str[i];
                     utf8_chr_str[i + 11] = END;
                 }
@@ -302,7 +302,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
                 }
                 else if(i == 14) // transition
                 {
-                    utf8d_append(utf8_chr_str, SCY_CHR_BEGIN);
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
                     utf8_chr_str[i + 12] = bytes_str[i];
                     utf8_chr_str[i + 13] = END;
                 }
@@ -450,17 +450,17 @@ static int32_t utf8ord(const char *str)
 {
     int32_t ord = -1;
 
-    printf("%d\n", strlen("~"));
+    printf("%ld\n", strlen("~"));
 
     return ord;
 }
 
 #undef END
-#undef LATIN_BEGIN
-#undef BASIC_MUL_LANG_BEGIN
+#undef LATIN_EXTRA_BEGIN
+#undef BASIC_MULTILINGUAL_BEGIN
 #undef OTHERS_PLANES_UNICODE_BEGIN
-#undef SCY_CHR_BEGIN
-#undef UTF8_BAD_CHAR;
-#undef UTF8_GOOD_CHAR;
+#undef SECONDARY_CHAR_BEGIN
+#undef UTF8_BAD_CHAR
+#undef UTF8_GOOD_CHAR
 
 #endif
