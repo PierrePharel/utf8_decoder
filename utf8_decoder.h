@@ -23,6 +23,12 @@
 #ifndef UTF8_DECODER
 #define UTF8_DECODER
 
+#if defined(_MSC_VER) && (_MSC_VER < 1920)
+typedef __int32 int32_t;
+#else
+#include <stdint.h>
+#endif
+
 #ifdef __cplusplus
 #define Cast(type, var) static_cast<type>(var)
 #else
