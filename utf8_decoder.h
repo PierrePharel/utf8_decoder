@@ -69,7 +69,7 @@ static char *utf8decode(const char *hex_str);
 
 static short utf8valid(const char *str);
 
-static int32_t utf8ord(const char *str);
+static int32_t utf8codepoint(const char *str);
 
 /* ghost functions */
 
@@ -452,13 +452,42 @@ static short utf8valid(const char *str)
 
 #include <stdio.h>
 
-static int32_t utf8ord(const char *str)
+static int32_t utf8codepoint(const char *str)
 {
-    int32_t ord = -1;
+    int32_t codepoint = 0;
+    const char *s = str;
 
-    printf("%ld\n", strlen("~"));
+    while(*s != END)
+    {
+        if(0xf0 == (0xf8 & *s))
+        {
+            // four bytes
+            codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) | ((0x3f & s[2]) << 6) | (0x3f & s[3]);
+            s += 4;
+        }
+        else if(0xe0 == (0xf0 & *s))
+        {
+            // three bytes
+            codepoint = ((0x0f & s[0]) << 12) | ((0x3f & s[1]) << 6) | (0x3f & s[2]);
+            s += 3;
+        }
+        else if(0xc0 == (0xe0 & *s))
+        {
+            // two bytes
+            codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
+            s += 2;
+        }
+        else
+        {
+            // one byte
+            codepoint = s[0];
+            ++ s;
+        }
+    }
 
-    return ord;
+    printf("%d\n", codepoint);
+
+    return codepoint;
 }
 
 #undef END
