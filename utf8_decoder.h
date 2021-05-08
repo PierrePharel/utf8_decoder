@@ -71,7 +71,7 @@ static short utf8valid(const char *str);
 
 static int32_t utf8codepoint(const char *str);
 
-static void utf8chr(const int32_t codepoint)
+static void utf8chr(const int32_t codepoint);
 
 /* ghost functions */
 
