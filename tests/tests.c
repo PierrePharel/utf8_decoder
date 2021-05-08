@@ -21,11 +21,12 @@
 // THE SOFTWARE.
 
 #include <stdio.h>
+#include <stdint.h>
 #include <utf8_decoder.h>
 
 int main(void)
 {
-    utf8ord(NULL);
+    utf8codepoint("A");
 
     return 0;
 }

@@ -71,6 +71,8 @@ static short utf8valid(const char *str);
 
 static int32_t utf8codepoint(const char *str);
 
+static void utf8chr(const int32_t codepoint)
+
 /* ghost functions */
 
 static void utf8d_copy(const short begin, char* const src, char *dst)
@@ -373,7 +375,7 @@ static short utf8valid(const char *str)
 {
     const char *s = str;
 
-    while('\0' != *s)
+    while(*s != END)
     {
         if(0xf0 == (0xf8 & *s))
         {
@@ -488,6 +490,13 @@ static int32_t utf8codepoint(const char *str)
     printf("%d\n", codepoint);
 
     return codepoint;
+}
+
+static void utf8chr(const int32_t codepoint)
+{
+    char *str[5] = {0};
+
+    
 }
 
 #undef END

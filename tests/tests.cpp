@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <cstdio>
 #include <utf8_decoder.h>
 
 int main(void)
 {
-    utf8ord(NULL);
+    utf8codepoint(NULL);
 
     return 0;
 }
