@@ -29,6 +29,8 @@ typedef __int32 int32_t;
 #include <stdint.h>
 #endif
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 #define Cast(type, var) static_cast<type>(var)
 #else
@@ -41,7 +43,7 @@ typedef __int32 int32_t;
 // str bytes beginning
 #define LATIN_EXTRA_BEGIN ("110")
 #define BASIC_MULTILINGUAL_BEGIN ("1110")
-#define OTHERS_PLANES_UNICODE_BEGIN ("111100") // must be 0xf0 (0b11110xxx), but '0' add for 32bit align
+#define OTHERS_PLANES_UNICODE_BEGIN ("11110")
 #define SECONDARY_CHAR_BEGIN ("10")
 
 #define END ('\0')
@@ -57,7 +59,7 @@ typedef enum
     utf8_OutRange_t
 } UTF8Type_t;
 
-static UTF8Type_t utf8type(const char *hex_str);
+static UTF8Type_t utf8type(const char *hex_str, char *dest);
 
 static void hex_to_bytes_str(const char *hex_str, char *bytes_str);
 
@@ -65,17 +67,17 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str);
 
 static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str);
 
-static char *utf8decode(const char *hex_str);
+static void utf8decode(const char *hex_str, char* dest);
 
 static short utf8valid(const char *str);
 
 static int32_t utf8codepoint(const char *str);
 
-static void utf8chr(const int32_t codepoint);
+static void utf8chr(const int32_t codepoint, char *dest);
 
 /* ghost functions */
 
-static void utf8d_copy(const short begin, char* const src, char *dst)
+static void utf8_move(const short begin, char* const src, char *dst)
 {
     const char *s = (src + begin);
     short i = 0;
@@ -99,14 +101,12 @@ static void utf8d_append(char *dst, const char *str)
     dst[i] = END;
 }
 
-static UTF8Type_t utf8type(const char *hex_str)
+static UTF8Type_t utf8type(const char *hex_str, char *dest)
 {
-    UTF8Type_t type;
     int32_t codepoint = 0;
     short shift = 0;
-    const char *s = hex_str;
 
-    while(*s != END)
+    for(const char *s = hex_str; *s != END; ++ s)
     {
         switch(*s)
         {
@@ -140,21 +140,21 @@ static UTF8Type_t utf8type(const char *hex_str)
         }
 
         shift = 4;
-        ++ s;
     }
 
-    if(codepoint <= 0x007f)
-        type = utf8_USASCII_t;
-    else if(codepoint > 0x007f && codepoint <= 0x07ff)
-        type = utf8_LatinExtra_t;
-    else if(codepoint > 0x07ff && codepoint <= 0xffff)
-        type = utf8_BasicMultiLingual_t;
-    else if(codepoint > 0xffff && codepoint <= 0x10ffff)
-        type = utf8_OthersPlanesUnicode_t;
-    else
-        type = utf8_OutRange_t;
+    if(dest != NULL)
+        dest[0] = codepoint;
 
-    return type;
+    if(codepoint >= 0x0000 && codepoint <= 0x007f)
+        return utf8_USASCII_t;
+    else if(codepoint > 0x007f && codepoint <= 0x07ff)
+        return utf8_LatinExtra_t;
+    else if(codepoint > 0x07ff && codepoint <= 0xffff)
+        return utf8_BasicMultiLingual_t;
+    else if(codepoint > 0xffff && codepoint <= 0x10ffff)
+        return utf8_OthersPlanesUnicode_t;
+
+    return utf8_OutRange_t;
 }
 
 static void hex_to_bytes_str(const char *hex_str, char *bytes_str)
@@ -217,7 +217,7 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
     {
         case utf8_LatinExtra_t:
         {
-            utf8d_copy(5, utf8_chr_str, bytes_str);
+            utf8_move(5, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, LATIN_EXTRA_BEGIN);
             for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 5) // first char
@@ -240,9 +240,10 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
             break;
         }
 
+/*
         case utf8_BasicMultiLingual_t:
         {
-            utf8d_copy(0, utf8_chr_str, bytes_str);
+            utf8_move(0, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, BASIC_MULTILINGUAL_BEGIN);
             for(short i = 0; bytes_str[i] != END; ++ i)
                 if(i < 4) // first char
@@ -278,51 +279,53 @@ static void bytes_to_utf8chr_str(UTF8Type_t type, char *utf8_chr_str)
 
         case utf8_OthersPlanesUnicode_t:
         {
-            utf8d_copy(0, utf8_chr_str, bytes_str);
+            utf8_move(3, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, OTHERS_PLANES_UNICODE_BEGIN);
             for(short i = 0; bytes_str[i] != END; ++ i)
-                if(i < 2) // first char
+                if(i < 3) // first char
                 {
-                    utf8_chr_str[i + 6] = bytes_str[i];
-                    utf8_chr_str[i + 7] = END;
+                    utf8_chr_str[i + 5] = bytes_str[i];
+                    utf8_chr_str[i + 6] = END;
                 }
-                else if(i == 2) // transition
+                else if(i == 3) // transition
                 {
                     utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = END;
+                    utf8_chr_str[i + 7] = bytes_str[i];
+                    utf8_chr_str[i + 8] = END;
                 }
-                else if(i > 2 && i < 8)
+                else if(i > 3 && i < 9)
                 {
-                    utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = END;
+                    utf8_chr_str[i + 7] = bytes_str[i];
+                    utf8_chr_str[i + 8] = END;
                 }
-                else if(i == 8) // transition
-                {
-                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 10] = bytes_str[i];
-                    utf8_chr_str[i + 11] = END;
-                }
-                else if(i > 8 && i < 14)
-                {
-                    utf8_chr_str[i + 10] = bytes_str[i];
-                    utf8_chr_str[i + 11] = END;
-                }
-                else if(i == 14) // transition
+                else if(i == 9) // transition
                 {
                     utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 12] = bytes_str[i];
-                    utf8_chr_str[i + 13] = END;
+                    utf8_chr_str[i + 9] = bytes_str[i];
+                    utf8_chr_str[i + 10] = END;
+                }
+                else if(i > 9 && i < 15)
+                {
+                    utf8_chr_str[i + 9] = bytes_str[i];
+                    utf8_chr_str[i + 10] = END;
+                }
+                else if(i == 15) // transition
+                {
+                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
+                    utf8_chr_str[i + 11] = bytes_str[i];
+                    utf8_chr_str[i + 12] = END;
                 }
                 else // last char
                 {
-                    utf8_chr_str[i + 12] = bytes_str[i];
-                    utf8_chr_str[i + 13] = END;
+                    utf8_chr_str[i + 11] = bytes_str[i];
+                    utf8_chr_str[i + 12] = END;
+                    printf("s : %s\n", utf8_chr_str);
                 }
 
             break;
         }
     }
+    */
 }
 
 static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
@@ -344,31 +347,34 @@ static void str_to_bit_decoded(const char *utf8_chr_str, char *utf8_str)
     utf8_str[j] = END;
 }
 
-static char *utf8decode(const char *hex_str)
+static void utf8decode(const char *hex_str, char* dest)
 {
-    const UTF8Type_t type = utf8type(hex_str);
+    const UTF8Type_t type = utf8type(hex_str, NULL);
     char utf8_chr_str[33] = {0};
-    char buf[5] = {0};
 
     switch(type)
     {
         case utf8_USASCII_t:
-            buf[0] = utf8type(hex_str);
-            buf[1] = END;
+        {
+            utf8type(hex_str, dest);
+            dest[1] = END;
             break;
+        }
+
         case utf8_LatinExtra_t:
         case utf8_BasicMultiLingual_t:
         case utf8_OthersPlanesUnicode_t:
+        {
             hex_to_bytes_str(hex_str, utf8_chr_str);
             bytes_to_utf8chr_str(type, utf8_chr_str);
-            str_to_bit_decoded(utf8_chr_str, buf);
+            str_to_bit_decoded(utf8_chr_str, dest);
             break;
+        }
+
         case utf8_OutRange_t:
-            buf[0] = END;
+            dest[0] = END;
             break;
     }
-
-    return strcpy(Cast(char*, calloc(5, sizeof(char))), buf);
 }
 
 static short utf8valid(const char *str)
@@ -452,51 +458,51 @@ static short utf8valid(const char *str)
     return UTF8_GOOD_CHAR;
 }
 
-#include <stdio.h>
-
 static int32_t utf8codepoint(const char *str)
 {
-    int32_t codepoint = 0;
+    int32_t codepoint = -1;
     const char *s = str;
 
-    while(*s != END)
-    {
-        if(0xf0 == (0xf8 & *s))
+    if(utf8valid(str))
+        while(*s != END)
         {
-            // four bytes
-            codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) | ((0x3f & s[2]) << 6) | (0x3f & s[3]);
-            s += 4;
+            if(0xf0 == (0xf8 & *s))
+            {
+                // four bytes
+                codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) | ((0x3f & s[2]) << 6) | (0x3f & s[3]);
+                s += 4;
+            }
+            else if(0xe0 == (0xf0 & *s))
+            {
+                // three bytes
+                codepoint = ((0x0f & s[0]) << 12) | ((0x3f & s[1]) << 6) | (0x3f & s[2]);
+                s += 3;
+            }
+            else if(0xc0 == (0xe0 & *s))
+            {
+                printf("two bit : %d\n", s[0]);
+                // two bytes
+                codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
+                s += 2;
+            }
+            else if(0x00 == (0x80 & *s))
+            {
+                // one byte
+                printf("one bit : %d\n", s[0]);
+                codepoint = s[0];
+                ++ s;
+            }
         }
-        else if(0xe0 == (0xf0 & *s))
-        {
-            // three bytes
-            codepoint = ((0x0f & s[0]) << 12) | ((0x3f & s[1]) << 6) | (0x3f & s[2]);
-            s += 3;
-        }
-        else if(0xc0 == (0xe0 & *s))
-        {
-            // two bytes
-            codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
-            s += 2;
-        }
-        else
-        {
-            // one byte
-            codepoint = s[0];
-            ++ s;
-        }
-    }
-
-    printf("%d\n", codepoint);
 
     return codepoint;
 }
 
-static void utf8chr(const int32_t codepoint)
+static void utf8chr(const int32_t codepoint, char *dest)
 {
-    char *str[5] = {0};
+    if(codepoint <= 0x10ffff)
+    {
 
-    
+    }
 }
 
 #undef END
