@@ -31,19 +31,11 @@ typedef __int32 int32_t;
 
 #include <stdio.h>
 
-#ifdef __cplusplus
-#define Cast(type, var) static_cast<type>(var)
-#else
-#define Cast(type, var) (type)var
-#endif
-
 #include <stdlib.h>
-#include <string.h>
 
-// str bytes beginning
 #define LATIN_EXTRA_BEGIN 0xc0
 #define BASIC_MULTILINGUAL_BEGIN 0xe0
-#define OTHERS_PLANES_UNICODE_BEGIN ("11110")
+#define OTHERS_PLANES_UNICODE_BEGIN 0xf0
 #define SECONDARY_CHAR_BEGIN 0x80
 
 #define END ('\0')
