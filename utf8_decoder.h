@@ -131,12 +131,10 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
 
 static char hex_to_bytes(const char hex_chr)
 {
-    char result = 0;
+    char result = 0x0;
 
     switch(hex_chr)
     {
-            case '0': result = 0x0;
-                break;
             case '1': result = 0x1;
                 break;
             case '2': result = 0x2;
@@ -190,11 +188,13 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             dst[0] = LATIN_EXTRA_BEGIN;
             dst[0] |= ((hex_to_bytes(hex_str[1]) & 0x7) << 2);
             dst[0] |= ((hex_to_bytes(hex_str[2]) & 0xc) >> 2);
+            printf("test hex : %x\n", dst[0]);
 
             // second char
             dst[1] = SECONDARY_CHAR_BEGIN;
             dst[1] |= ((hex_to_bytes(hex_str[2]) & 0x3) << 4);
             dst[1] |= hex_to_bytes(hex_str[3]);
+            printf("test hex : %x\n", dst[1]);
 
             // end char
             dst[2] = END;
@@ -202,48 +202,35 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             break;
         }
 
-
         case utf8_BasicMultiLingual_t:
         {
+            // first char
             dst[0] = BASIC_MULTILINGUAL_BEGIN;
-            printf("test bool : %d\n", dst[0] == 0b11100000);
+            dst[0] |= hex_to_bytes(hex_str[0]);
             printf("test hex : %x\n", dst[0]);
-            /*utf8_move(0, utf8_chr_str, bytes_str);
-            utf8d_append(utf8_chr_str, BASIC_MULTILINGUAL_BEGIN);
-            for(short i = 0; bytes_str[i] != END; ++ i)
-                if(i < 4) // first char
-                {
-                    utf8_chr_str[i + 4] = bytes_str[i];
-                    utf8_chr_str[i + 5] = END;
-                }
-                else if(i == 4) // transition
-                {
-                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 6] = bytes_str[i];
-                    utf8_chr_str[i + 7] = END;
-                }
-                else if(i > 4 && i < 10) // second char
-                {
-                    utf8_chr_str[i + 6] = bytes_str[i];
-                    utf8_chr_str[i + 7] = END;
-                }
-                else if(i == 10) // transition
-                {
-                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = END;
-                }
-                else // last char
-                {
-                    utf8_chr_str[i + 8] = bytes_str[i];
-                    utf8_chr_str[i + 9] = END;
-                }
-            */
+
+            // second char
+            dst[1] = SECONDARY_CHAR_BEGIN;
+            dst[1] |= (hex_to_bytes(hex_str[1]) << 2);
+            dst[1] |= ((hex_to_bytes(hex_str[2]) & 0xc) >> 2);
+            printf("test hex : %x\n", dst[1]);
+
+            // third char
+            dst[2] = SECONDARY_CHAR_BEGIN;
+            dst[2] |= ((hex_to_bytes(hex_str[2]) & 0x3) << 4);
+            dst[2] |= hex_to_bytes(hex_str[3]);
+            printf("test hex : %x\n", dst[2]);
+
+            // end char
+            dst[3] = END;
             break;
         }
-/*
+
         case utf8_OthersPlanesUnicode_t:
         {
+            
+            break;
+/*
             utf8_move(3, utf8_chr_str, bytes_str);
             utf8d_append(utf8_chr_str, OTHERS_PLANES_UNICODE_BEGIN);
             for(short i = 0; bytes_str[i] != END; ++ i)
@@ -286,10 +273,8 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                     utf8_chr_str[i + 12] = END;
                     printf("s : %s\n", utf8_chr_str);
                 }
-
-            break;
-        }
     */
+        }
     }
 }
 
