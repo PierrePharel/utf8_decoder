@@ -30,8 +30,7 @@ typedef __int32 int32_t;
 #endif
 
 #include <stdio.h>
-
-#include <stdlib.h>
+#include <string.h>
 
 #define LATIN_EXTRA_BEGIN 0xc0
 #define BASIC_MULTILINGUAL_BEGIN 0xe0
@@ -190,7 +189,6 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
 
             // end char
             dst[2] = END;
-            printf("dst : %s\n", dst);
             break;
         }
 
@@ -220,7 +218,38 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
 
         case utf8_OthersPlanesUnicode_t:
         {
-            
+            if(strlen(hex_str) == 5)
+            {
+                // first char
+                dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
+                dst[0] |= ((hex_to_bytes(hex_str[0]) & 0xc) >> 2);
+                printf("test hex : %x\n", dst[0]);
+
+                // second char
+                dst[1] = SECONDARY_CHAR_BEGIN;
+                dst[1] |= ((hex_to_bytes(hex_str[0]) & 0x3) << 4);
+                dst[1] |= hex_to_bytes(hex_str[1]);
+                printf("test hex : %x\n", dst[1]);
+
+                // third char
+                dst[2] = SECONDARY_CHAR_BEGIN;
+                dst[2] |= (hex_to_bytes(hex_str[2]) << 2);
+                dst[2] |= ((hex_to_bytes(hex_str[3]) & 0xc) >> 2);
+                printf("test hex : %x\n", dst[2]);
+
+                // fourth char
+                dst[3] = SECONDARY_CHAR_BEGIN;
+                dst[3] |= ((hex_to_bytes(hex_str[3]) & 0x3) << 4);
+                dst[3] |= hex_to_bytes(hex_str[4]);
+                printf("test hex : %x\n", dst[3]);
+
+                // end char
+                dst[4] = END;
+            }
+            /*else
+                dst[0] |= ((hex_to_bytes(hex_str[0]) & 0x1) << 2);*/
+
+
             break;
 /*
             utf8_move(3, utf8_chr_str, bytes_str);
