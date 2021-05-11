@@ -64,6 +64,9 @@ static int32_t utf8codepoint(const char *str);
 
 static void utf8chr(const int32_t codepoint, char *dest);
 
+
+
+
 static UTF8Type_t utf8type(const char *hex_str, char *dest)
 {
     int32_t codepoint = 0;
@@ -218,7 +221,9 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
 
         case utf8_OthersPlanesUnicode_t:
         {
-            if(strlen(hex_str) == 5)
+            size_t str_sz = strlen(hex_str);
+
+            if(str_sz == 5)
             {
                 // first char
                 dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
@@ -246,55 +251,40 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                 // end char
                 dst[4] = END;
             }
-            /*else
-                dst[0] |= ((hex_to_bytes(hex_str[0]) & 0x1) << 2);*/
+            else if(str_sz == 6)
+            {
+                printf("six !\n");
+                // first char
+                dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
+                dst[0] |= ((hex_to_bytes(hex_str[0]) & 0x1) << 2);
+                dst[0] |= ((hex_to_bytes(hex_str[1]) & 0xc) >> 2);
+                printf("test hex : %x\n", dst[0]);
+
+                // second char
+                dst[1] = SECONDARY_CHAR_BEGIN;
+                dst[1] |= ((hex_to_bytes(hex_str[1]) & 0x3) << 4);
+                dst[1] |= ((hex_to_bytes(hex_str[1]) & 0xc) >> 2);
+                dst[1] |= hex_to_bytes(hex_str[2]);
+                printf("test hex : %x\n", dst[1]);
+
+                // third char
+                dst[2] = SECONDARY_CHAR_BEGIN;
+                dst[2] |= (hex_to_bytes(hex_str[3]) << 2);
+                dst[2] |= ((hex_to_bytes(hex_str[4]) & 0xc) >> 2);
+                printf("test hex : %x\n", dst[2]);
+
+                // fourth char
+                dst[3] = SECONDARY_CHAR_BEGIN;
+                dst[3] |= ((hex_to_bytes(hex_str[4]) & 0x3) << 4);
+                dst[3] |= hex_to_bytes(hex_str[5]);
+                printf("test hex : %x\n", dst[3]);
+
+                // end char
+                dst[4] = END;
+            }
 
 
             break;
-/*
-            utf8_move(3, utf8_chr_str, bytes_str);
-            utf8d_append(utf8_chr_str, OTHERS_PLANES_UNICODE_BEGIN);
-            for(short i = 0; bytes_str[i] != END; ++ i)
-                if(i < 3) // first char
-                {
-                    utf8_chr_str[i + 5] = bytes_str[i];
-                    utf8_chr_str[i + 6] = END;
-                }
-                else if(i == 3) // transition
-                {
-                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 7] = bytes_str[i];
-                    utf8_chr_str[i + 8] = END;
-                }
-                else if(i > 3 && i < 9)
-                {
-                    utf8_chr_str[i + 7] = bytes_str[i];
-                    utf8_chr_str[i + 8] = END;
-                }
-                else if(i == 9) // transition
-                {
-                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 9] = bytes_str[i];
-                    utf8_chr_str[i + 10] = END;
-                }
-                else if(i > 9 && i < 15)
-                {
-                    utf8_chr_str[i + 9] = bytes_str[i];
-                    utf8_chr_str[i + 10] = END;
-                }
-                else if(i == 15) // transition
-                {
-                    utf8d_append(utf8_chr_str, SECONDARY_CHAR_BEGIN);
-                    utf8_chr_str[i + 11] = bytes_str[i];
-                    utf8_chr_str[i + 12] = END;
-                }
-                else // last char
-                {
-                    utf8_chr_str[i + 11] = bytes_str[i];
-                    utf8_chr_str[i + 12] = END;
-                    printf("s : %s\n", utf8_chr_str);
-                }
-    */
         }
     }
 }
