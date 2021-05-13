@@ -325,6 +325,8 @@ static short utf8valid(const char *str)
 {
     const char *s = str;
 
+    if (str == NULL) return UTF8_GOOD_CHAR;
+
     while(*s != END)
     {
         if(0xf0 == (0xf8 & *s))
@@ -408,6 +410,8 @@ static int32_t utf8codepoint(const char *str)
     const char *s = str;
 
     if(utf8valid(str))
+        if (str == NULL) return 0;
+
         while(*s != END)
         {
             if(0xf0 == (0xf8 & *s))
