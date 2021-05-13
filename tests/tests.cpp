@@ -20,11 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <utf8_decoder.h>
+#include <iostream>
+#include "../utf8_decoder.h"
 
-int main(void)
+int test_null_codepoint(int& nb) {
+    int test = utf8codepoint(NULL) == 0;
+
+    nb += test;
+    return test;
+}
+
+int main()
 {
-    utf8codepoint(NULL);
+    int nb_tests = 1;
+    int nb_passed = 0;
 
-    return 0;
+    std::cout << "test null codepoint: " << test_null_codepoint(nb_passed) << "\n";
+
+    return (nb_tests - nb_passed > 0);
 }

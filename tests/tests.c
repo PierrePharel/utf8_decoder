@@ -21,12 +21,21 @@
 // THE SOFTWARE.
 
 #include <stdio.h>
-#include <stdint.h>
 #include <utf8_decoder.h>
 
-int main(void)
-{
-    utf8codepoint("A");
+int test_null_codepoint(int *nb) {
+    int test = utf8codepoint(NULL) == 0;
 
-    return 0;
+    *nb += test;
+    return test;
+}
+
+int main()
+{
+    int nb_tests = 1;
+    int nb_passed = 0;
+
+    printf("test null codepoint: %i\n", test_null_codepoint(&nb_passed));
+
+    return (nb_tests - nb_passed > 0);
 }
