@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 #include <stdio.h>
-#include <utf8_decoder.h>
+#include "../utf8_decoder.h"
 #include "test.h"
 
 int main()
