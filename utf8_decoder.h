@@ -125,7 +125,9 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
 
 static char hex_to_bytes(const char hex_chr)
 {
-    if (hex_chr <= 48)
+    if (hex_chr < 48)
+        return 0;
+    if (hex_chr <= 57)
         return hex_chr - 48;
     if (hex_chr <= 70)
         return hex_chr - 55;
