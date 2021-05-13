@@ -22,20 +22,16 @@
 
 #include <iostream>
 #include "../utf8_decoder.h"
-
-int test_null_codepoint(int& nb) {
-    int test = utf8codepoint(NULL) == 0;
-
-    nb += test;
-    return test;
-}
+#include "test.h"
 
 int main()
 {
-    int nb_tests = 1;
-    int nb_passed = 0;
+    BEGIN_TESTS
 
-    std::cout << "test null codepoint: " << test_null_codepoint(nb_passed) << "\n";
+    TEST(0, utf8codepoint(NULL), "null codepoint")
+    TEST(65, utf8codepoint("A"), "codepoint A")
 
-    return (nb_tests - nb_passed > 0);
+    END_TESTS
+
+    return (number_of_tests - passed_tests > 0);
 }
