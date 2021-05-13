@@ -125,13 +125,11 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
 
 static char hex_to_bytes(const char hex_chr)
 {
-    if (hex_chr < 48)
-        return 0;
-    if (hex_chr <= 57)
+    if ('0' <= hex_chr && hex_chr <= '9')
         return hex_chr - 48;
-    if (hex_chr <= 70)
+    if ('A' <= hex_chr && hex_chr <= 'F')
         return hex_chr - 55;
-    if (hex_chr <= 102)
+    if ('a' <= hex_chr && hex_chr <= 'f')
         return hex_chr - 87;
     return 0;
 }
