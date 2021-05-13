@@ -20,11 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <utf8_decoder.h>
+#include <iostream>
+#include "../utf8_decoder.h"
+#include "test.h"
 
-int main(void)
+int main()
 {
-    utf8codepoint(NULL);
+    BEGIN_TESTS
 
-    return 0;
+    TEST(0, utf8codepoint(NULL), "null codepoint");
+    TEST(65, utf8codepoint("A"), "codepoint A");
+
+    END_TESTS
 }

@@ -21,12 +21,15 @@
 // THE SOFTWARE.
 
 #include <stdio.h>
-#include <stdint.h>
-#include <utf8_decoder.h>
+#include "../utf8_decoder.h"
+#include "test.h"
 
-int main(void)
+int main()
 {
-    utf8codepoint("A");
+    BEGIN_TESTS
 
-    return 0;
+    TEST(0, utf8codepoint(NULL), "null codepoint");
+    TEST(65, utf8codepoint("A"), "codepoint A");
+
+    END_TESTS
 }
