@@ -125,49 +125,13 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
 
 static char hex_to_bytes(const char hex_chr)
 {
-    char result = 0x0;
-
-    switch(hex_chr)
-    {
-            case '1': result = 0x1;
-                break;
-            case '2': result = 0x2;
-                break;
-            case '3': result = 0x3;
-                break;
-            case '4': result = 0x4;
-                break;
-            case '5': result = 0x5;
-                break;
-            case '6': result = 0x6;
-                break;
-            case '7': result = 0x7;
-                break;
-            case '8': result = 0x8;
-                break;
-            case '9': result = 0x9;
-                break;
-            case 'a':
-            case 'A': result = 0xa;
-                break;
-            case 'b':
-            case 'B': result = 0xb;
-                break;
-            case 'c':
-            case 'C': result = 0xc;
-                break;
-            case 'd':
-            case 'D': result = 0xd;
-                break;
-            case 'e':
-            case 'E': result = 0xe;
-                break;
-            case 'f':
-            case 'F': result = 0xf;
-                break;
-    }
-
-    return result;
+    if ('0' <= hex_chr && hex_chr <= '9')
+        return hex_chr - 48;
+    if ('A' <= hex_chr && hex_chr <= 'F')
+        return hex_chr - 55;
+    if ('a' <= hex_chr && hex_chr <= 'f')
+        return hex_chr - 87;
+    return 0;
 }
 
 static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned char *dest)
