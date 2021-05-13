@@ -28,10 +28,8 @@ int main()
 {
     BEGIN_TESTS
 
-    TEST(0, utf8codepoint(NULL), "null codepoint")
-    TEST(65, utf8codepoint("A"), "codepoint A")
+    TEST(0, utf8codepoint(NULL), "null codepoint");
+    TEST(65, utf8codepoint("A"), "codepoint A");
 
     END_TESTS
-
-    return (number_of_tests - passed_tests > 0);
 }
