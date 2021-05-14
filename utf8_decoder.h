@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef UTF8_DECODER
-#define UTF8_DECODER
+#ifndef UTF8_DECODER_H
+#define UTF8_DECODER_H
 
 #if defined(_MSC_VER) && (_MSC_VER < 1920)
 typedef __int32 int32_t;
@@ -52,7 +52,7 @@ typedef enum
 
 static UTF8Type_t utf8type(const char *hex_str, char *dest);
 
-static char hex_to_bytes(const char hex_chr);
+static char hexchr_to_hex(const char hex_chr);
 
 static void decode_to_ustring(const char *hex_str, UTF8Type_t type,unsigned char *dest);
 
@@ -123,7 +123,7 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
     return utf8_OutRange_t;
 }
 
-static char hex_to_bytes(const char hex_chr)
+static char hexchr_to_hex(const char hex_chr)
 {
     if ('0' <= hex_chr && hex_chr <= '9')
         return hex_chr - 48;
@@ -144,14 +144,14 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
         {
             // first char
             dst[0] = LATIN_EXTRA_BEGIN;
-            dst[0] |= ((hex_to_bytes(hex_str[1]) & 0x7) << 2);
-            dst[0] |= ((hex_to_bytes(hex_str[2]) & 0xc) >> 2);
+            dst[0] |= ((hexchr_to_hex(hex_str[1]) & 0x7) << 2);
+            dst[0] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
             printf("test hex : %x\n", dst[0]);
 
             // second char
             dst[1] = SECONDARY_CHAR_BEGIN;
-            dst[1] |= ((hex_to_bytes(hex_str[2]) & 0x3) << 4);
-            dst[1] |= hex_to_bytes(hex_str[3]);
+            dst[1] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
+            dst[1] |= hexchr_to_hex(hex_str[3]);
             printf("test hex : %x\n", dst[1]);
 
             // end char
@@ -163,19 +163,19 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
         {
             // first char
             dst[0] = BASIC_MULTILINGUAL_BEGIN;
-            dst[0] |= hex_to_bytes(hex_str[0]);
+            dst[0] |= hexchr_to_hex(hex_str[0]);
             printf("test hex : %x\n", dst[0]);
 
             // second char
             dst[1] = SECONDARY_CHAR_BEGIN;
-            dst[1] |= (hex_to_bytes(hex_str[1]) << 2);
-            dst[1] |= ((hex_to_bytes(hex_str[2]) & 0xc) >> 2);
+            dst[1] |= (hexchr_to_hex(hex_str[1]) << 2);
+            dst[1] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
             printf("test hex : %x\n", dst[1]);
 
             // third char
             dst[2] = SECONDARY_CHAR_BEGIN;
-            dst[2] |= ((hex_to_bytes(hex_str[2]) & 0x3) << 4);
-            dst[2] |= hex_to_bytes(hex_str[3]);
+            dst[2] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
+            dst[2] |= hexchr_to_hex(hex_str[3]);
             printf("test hex : %x\n", dst[2]);
 
             // end char
@@ -191,25 +191,25 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             {
                 // first char
                 dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
-                dst[0] |= ((hex_to_bytes(hex_str[0]) & 0xc) >> 2);
+                dst[0] |= ((hexchr_to_hex(hex_str[0]) & 0xc) >> 2);
                 printf("test hex : %x\n", dst[0]);
 
                 // second char
                 dst[1] = SECONDARY_CHAR_BEGIN;
-                dst[1] |= ((hex_to_bytes(hex_str[0]) & 0x3) << 4);
-                dst[1] |= hex_to_bytes(hex_str[1]);
+                dst[1] |= ((hexchr_to_hex(hex_str[0]) & 0x3) << 4);
+                dst[1] |= hexchr_to_hex(hex_str[1]);
                 printf("test hex : %x\n", dst[1]);
 
                 // third char
                 dst[2] = SECONDARY_CHAR_BEGIN;
-                dst[2] |= (hex_to_bytes(hex_str[2]) << 2);
-                dst[2] |= ((hex_to_bytes(hex_str[3]) & 0xc) >> 2);
+                dst[2] |= (hexchr_to_hex(hex_str[2]) << 2);
+                dst[2] |= ((hexchr_to_hex(hex_str[3]) & 0xc) >> 2);
                 printf("test hex : %x\n", dst[2]);
 
                 // fourth char
                 dst[3] = SECONDARY_CHAR_BEGIN;
-                dst[3] |= ((hex_to_bytes(hex_str[3]) & 0x3) << 4);
-                dst[3] |= hex_to_bytes(hex_str[4]);
+                dst[3] |= ((hexchr_to_hex(hex_str[3]) & 0x3) << 4);
+                dst[3] |= hexchr_to_hex(hex_str[4]);
                 printf("test hex : %x\n", dst[3]);
 
                 // end char
@@ -220,27 +220,27 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                 printf("six !\n");
                 // first char
                 dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
-                dst[0] |= ((hex_to_bytes(hex_str[0]) & 0x1) << 2);
-                dst[0] |= ((hex_to_bytes(hex_str[1]) & 0xc) >> 2);
+                dst[0] |= ((hexchr_to_hex(hex_str[0]) & 0x1) << 2);
+                dst[0] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
                 printf("test hex : %x\n", dst[0]);
 
                 // second char
                 dst[1] = SECONDARY_CHAR_BEGIN;
-                dst[1] |= ((hex_to_bytes(hex_str[1]) & 0x3) << 4);
-                dst[1] |= ((hex_to_bytes(hex_str[1]) & 0xc) >> 2);
-                dst[1] |= hex_to_bytes(hex_str[2]);
+                dst[1] |= ((hexchr_to_hex(hex_str[1]) & 0x3) << 4);
+                dst[1] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
+                dst[1] |= hexchr_to_hex(hex_str[2]);
                 printf("test hex : %x\n", dst[1]);
 
                 // third char
                 dst[2] = SECONDARY_CHAR_BEGIN;
-                dst[2] |= (hex_to_bytes(hex_str[3]) << 2);
-                dst[2] |= ((hex_to_bytes(hex_str[4]) & 0xc) >> 2);
+                dst[2] |= (hexchr_to_hex(hex_str[3]) << 2);
+                dst[2] |= ((hexchr_to_hex(hex_str[4]) & 0xc) >> 2);
                 printf("test hex : %x\n", dst[2]);
 
                 // fourth char
                 dst[3] = SECONDARY_CHAR_BEGIN;
-                dst[3] |= ((hex_to_bytes(hex_str[4]) & 0x3) << 4);
-                dst[3] |= hex_to_bytes(hex_str[5]);
+                dst[3] |= ((hexchr_to_hex(hex_str[4]) & 0x3) << 4);
+                dst[3] |= hexchr_to_hex(hex_str[5]);
                 printf("test hex : %x\n", dst[3]);
 
                 // end char
