@@ -10,12 +10,11 @@ A simple one header solution to decode hex utf8 string in C and C++.
 
 int main(void)
 {
-    char *utf8_str = NULL; // five is max size of utf8 string with null-terminated char
+    char utf8_str[5] = {0}; // five is max size of utf8 string with null-terminated char
 
-    utf8_str = utf8decode("1F47A");
+   	utf8decode("1F47A", utf8_str);
     printf("decoded : %s\n", utf8_str);  // decoded : 👺
 
-    free(utf8_str); // freeing of **utf8_str** because utfe8decode use dynamic memory allocation
 }
 ```
 
