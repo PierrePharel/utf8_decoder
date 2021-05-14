@@ -32,6 +32,8 @@ typedef __int32 int32_t;
 #include <stdio.h>
 #include <string.h>
 
+#include "logger.h"
+
 #define LATIN_EXTRA_BEGIN 0xc0
 #define BASIC_MULTILINGUAL_BEGIN 0xe0
 #define OTHERS_PLANES_UNICODE_BEGIN 0xf0
@@ -142,16 +144,18 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             dest[0] = LATIN_EXTRA_BEGIN;
             dest[0] |= ((hexchr_to_hex(hex_str[1]) & 0x7) << 2);
             dest[0] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
-            printf("test hex : %x\n", dest[0]);
 
             // second char
             dest[1] = SECONDARY_CHAR_BEGIN;
             dest[1] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
             dest[1] |= hexchr_to_hex(hex_str[3]);
-            printf("test hex : %x\n", dest[1]);
 
             // end char
             dest[2] = END;
+
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(INFO, "%X %X\n", dest[0], dest[1]);
+#endif
             break;
         }
 
@@ -160,22 +164,23 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             // first char
             dest[0] = BASIC_MULTILINGUAL_BEGIN;
             dest[0] |= hexchr_to_hex(hex_str[0]);
-            printf("test hex : %x\n", dest[0]);
 
             // second char
             dest[1] = SECONDARY_CHAR_BEGIN;
             dest[1] |= (hexchr_to_hex(hex_str[1]) << 2);
             dest[1] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
-            printf("test hex : %x\n", dest[1]);
 
             // third char
             dest[2] = SECONDARY_CHAR_BEGIN;
             dest[2] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
             dest[2] |= hexchr_to_hex(hex_str[3]);
-            printf("test hex : %x\n", dest[2]);
 
             // end char
             dest[3] = END;
+
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(INFO, "%X %X %X\n", dest[0], dest[1], dest[2]);
+#endif
             break;
         }
 
@@ -188,28 +193,28 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                 // first char
                 dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
                 dest[0] |= ((hexchr_to_hex(hex_str[0]) & 0xc) >> 2);
-                printf("test hex : %x\n", dest[0]);
 
                 // second char
                 dest[1] = SECONDARY_CHAR_BEGIN;
                 dest[1] |= ((hexchr_to_hex(hex_str[0]) & 0x3) << 4);
                 dest[1] |= hexchr_to_hex(hex_str[1]);
-                printf("test hex : %x\n", dest[1]);
 
                 // third char
                 dest[2] = SECONDARY_CHAR_BEGIN;
                 dest[2] |= (hexchr_to_hex(hex_str[2]) << 2);
                 dest[2] |= ((hexchr_to_hex(hex_str[3]) & 0xc) >> 2);
-                printf("test hex : %x\n", dest[2]);
 
                 // fourth char
                 dest[3] = SECONDARY_CHAR_BEGIN;
                 dest[3] |= ((hexchr_to_hex(hex_str[3]) & 0x3) << 4);
                 dest[3] |= hexchr_to_hex(hex_str[4]);
-                printf("test hex : %x\n", dest[3]);
 
                 // end char
                 dest[4] = END;
+
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(INFO, "%X %X %X %X\n", dest[0], dest[1], dest[2],  dest[3]);
+#endif
             }
             else if (str_sz == 6)
             {
@@ -217,29 +222,29 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                 dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
                 dest[0] |= ((hexchr_to_hex(hex_str[0]) & 0x1) << 2);
                 dest[0] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
-                printf("test hex : %x\n", dest[0]);
 
                 // second char
                 dest[1] = SECONDARY_CHAR_BEGIN;
                 dest[1] |= ((hexchr_to_hex(hex_str[1]) & 0x3) << 4);
                 dest[1] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
                 dest[1] |= hexchr_to_hex(hex_str[2]);
-                printf("test hex : %x\n", dest[1]);
 
                 // third char
                 dest[2] = SECONDARY_CHAR_BEGIN;
                 dest[2] |= (hexchr_to_hex(hex_str[3]) << 2);
                 dest[2] |= ((hexchr_to_hex(hex_str[4]) & 0xc) >> 2);
-                printf("test hex : %x\n", dest[2]);
 
                 // fourth char
                 dest[3] = SECONDARY_CHAR_BEGIN;
                 dest[3] |= ((hexchr_to_hex(hex_str[4]) & 0x3) << 4);
                 dest[3] |= hexchr_to_hex(hex_str[5]);
-                printf("test hex : %x\n", dest[3]);
 
                 // end char
                 dest[4] = END;
+
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(INFO, "%X %X %X %X\n", dest[0], dest[1], dest[2],  dest[3]);
+#endif
             }
 
             break;
