@@ -23,7 +23,7 @@
 #ifndef UTF8_DECODER_H
 #define UTF8_DECODER_H
 
-#if defined(_MSC_VER) && (_MSC_VER < 1920)
+#if defined (_MSC_VER) && (_MSC_VER < 1920)
 typedef __int32 int32_t;
 #else
 #include <stdint.h>
@@ -72,9 +72,9 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
     int32_t codepoint = 0;
     short shift = 0;
 
-    for(const char *s = hex_str; *s != END; ++ s)
+    for (const char *s = hex_str; *s != END; ++ s)
     {
-        switch(*s)
+        switch (*s)
         {
             case '0':
             case '1':
@@ -108,16 +108,16 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
         shift = 4;
     }
 
-    if(dest != NULL)
+    if (dest != NULL)
         dest[0] = codepoint;
 
-    if(codepoint >= 0x0000 && codepoint <= 0x007f)
+    if (codepoint >= 0x0000 && codepoint <= 0x007f)
         return utf8_USASCII_t;
-    else if(codepoint > 0x007f && codepoint <= 0x07ff)
+    else if (codepoint > 0x007f && codepoint <= 0x07ff)
         return utf8_LatinExtra_t;
-    else if(codepoint > 0x07ff && codepoint <= 0xffff)
+    else if (codepoint > 0x07ff && codepoint <= 0xffff)
         return utf8_BasicMultiLingual_t;
-    else if(codepoint > 0xffff && codepoint <= 0x10ffff)
+    else if (codepoint > 0xffff && codepoint <= 0x10ffff)
         return utf8_OthersPlanesUnicode_t;
 
     return utf8_OutRange_t;
@@ -138,7 +138,7 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
 {
     unsigned char *dst = dest;
 
-    switch(type)
+    switch (type)
     {
         case utf8_LatinExtra_t:
         {
@@ -187,7 +187,7 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
         {
             size_t str_sz = strlen(hex_str);
 
-            if(str_sz == 5)
+            if (str_sz == 5)
             {
                 // first char
                 dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
@@ -215,7 +215,7 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                 // end char
                 dst[4] = END;
             }
-            else if(str_sz == 6)
+            else if (str_sz == 6)
             {
                 printf("six !\n");
                 // first char
@@ -247,7 +247,6 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
                 dst[4] = END;
             }
 
-
             break;
         }
     }
@@ -258,7 +257,7 @@ static void utf8decode(const char *hex_str, char* dest)
     UTF8Type_t type = utf8type(hex_str, NULL);
     unsigned char buffer[5] = {0};
 
-    switch(type)
+    switch (type)
     {
         case utf8_USASCII_t:
         {
@@ -273,7 +272,7 @@ static void utf8decode(const char *hex_str, char* dest)
         {
             short i = 0;
             decode_to_ustring(hex_str, type, buffer);
-            for(; buffer[i] != END; ++ i)
+            for (; buffer[i] != END; ++ i)
                 dest[i] = buffer[i];
             dest[i] = END;
             break;
@@ -289,39 +288,40 @@ static short utf8valid(const char *str)
 {
     const char *s = str;
 
-    if (str == NULL) return UTF8_GOOD_CHAR;
+    if (str == NULL)
+        return UTF8_GOOD_CHAR;
 
-    while(*s != END)
+    while (*s != END)
     {
-        if(0xf0 == (0xf8 & *s))
+        if (0xf0 == (0xf8 & *s))
         {
             // ensure each of the 3 following bytes in this 4-byte
             // utf8 codepoint began with 0b10xxxxxx
-            if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])) || (0x80 != (0xc0 & s[3])))
+            if ((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])) || (0x80 != (0xc0 & s[3])))
                 return UTF8_BAD_CHAR;
 
             // ensure that our utf8 codepoint ended after 4 bytes
-            if(0x80 == (0xc0 & s[4]))
+            if (0x80 == (0xc0 & s[4]))
                 return UTF8_BAD_CHAR;
 
             // ensure that the top 5 bits of this 4-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
-            if((0 == (0x07 & s[0])) && (0 == (0x30 & s[1])))
+            if ((0 == (0x07 & s[0])) && (0 == (0x30 & s[1])))
                 return UTF8_BAD_CHAR;
 
             // 4-byte utf8 code point (began with 0b11110xxx)
             s += 4;
         }
-        else if(0xe0 == (0xf0 & *s))
+        else if (0xe0 == (0xf0 & *s))
         {
             // ensure each of the 2 following bytes in this 3-byte
             // utf8 codepoint began with 0b10xxxxxx
-            if((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])))
+            if ((0x80 != (0xc0 & s[1])) || (0x80 != (0xc0 & s[2])))
                 return UTF8_BAD_CHAR;
 
             // ensure that our utf8 codepoint ended after 3 bytes
-            if(0x80 == (0xc0 & s[3]))
+            if (0x80 == (0xc0 & s[3]))
                 return UTF8_BAD_CHAR;
 
             // ensure that the top 5 bits of this 3-byte utf8
@@ -333,27 +333,27 @@ static short utf8valid(const char *str)
             // 3-byte utf8 code point (began with 0b1110xxxx)
             s += 3;
         }
-        else if(0xc0 == (0xe0 & *s))
+        else if (0xc0 == (0xe0 & *s))
         {
             // ensure the 1 following byte in this 2-byte
             // utf8 codepoint began with 0b10xxxxxx
-            if(0x80 != (0xc0 & s[1]))
+            if (0x80 != (0xc0 & s[1]))
                 return UTF8_BAD_CHAR;
 
             // ensure that our utf8 codepoint ended after 2 bytes
-            if(0x80 == (0xc0 & s[2]))
+            if (0x80 == (0xc0 & s[2]))
                 return UTF8_BAD_CHAR;
 
             // ensure that the top 4 bits of this 2-byte utf8
             // codepoint were not 0, as then we could have used
             // one of the smaller encodings
-            if(0 == (0x1e & s[0]))
+            if (0 == (0x1e & s[0]))
                 return UTF8_BAD_CHAR;
 
             // 2-byte utf8 code point (began with 0b110xxxxx)
             s += 2;
         }
-        else if(0x00 == (0x80 & *s))
+        else if (0x00 == (0x80 & *s))
         {
             // 1-byte ascii (began with 0b0xxxxxxx)
             s += 1;
@@ -373,31 +373,32 @@ static int32_t utf8codepoint(const char *str)
     int32_t codepoint = -1;
     const char *s = str;
 
-    if(utf8valid(str))
-        if (str == NULL) return 0;
+    if (utf8valid(str))
+        if (str == NULL)
+            return 0;
 
-        while(*s != END)
+        while (*s != END)
         {
-            if(0xf0 == (0xf8 & *s))
+            if (0xf0 == (0xf8 & *s))
             {
                 // four bytes
                 codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) | ((0x3f & s[2]) << 6) | (0x3f & s[3]);
                 s += 4;
             }
-            else if(0xe0 == (0xf0 & *s))
+            else if (0xe0 == (0xf0 & *s))
             {
                 // three bytes
                 codepoint = ((0x0f & s[0]) << 12) | ((0x3f & s[1]) << 6) | (0x3f & s[2]);
                 s += 3;
             }
-            else if(0xc0 == (0xe0 & *s))
+            else if (0xc0 == (0xe0 & *s))
             {
                 printf("two bit : %d\n", s[0]);
                 // two bytes
                 codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
                 s += 2;
             }
-            else if(0x00 == (0x80 & *s))
+            else if (0x00 == (0x80 & *s))
             {
                 // one byte
                 printf("one bit : %d\n", s[0]);
@@ -411,7 +412,7 @@ static int32_t utf8codepoint(const char *str)
 
 static void utf8chr(const int32_t codepoint, char *dest)
 {
-    if(codepoint <= 0x10ffff)
+    if (codepoint <= 0x10ffff)
     {
 
     }
