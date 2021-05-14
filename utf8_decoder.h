@@ -65,8 +65,6 @@ static int32_t utf8codepoint(const char *str);
 static void utf8chr(const int32_t codepoint, char *dest);
 
 
-
-
 static UTF8Type_t utf8type(const char *hex_str, char *dest)
 {
     int32_t codepoint = 0;
@@ -136,50 +134,48 @@ static char hexchr_to_hex(const char hex_chr)
 
 static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned char *dest)
 {
-    unsigned char *dst = dest;
-
     switch (type)
     {
         case utf8_LatinExtra_t:
         {
             // first char
-            dst[0] = LATIN_EXTRA_BEGIN;
-            dst[0] |= ((hexchr_to_hex(hex_str[1]) & 0x7) << 2);
-            dst[0] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
-            printf("test hex : %x\n", dst[0]);
+            dest[0] = LATIN_EXTRA_BEGIN;
+            dest[0] |= ((hexchr_to_hex(hex_str[1]) & 0x7) << 2);
+            dest[0] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
+            printf("test hex : %x\n", dest[0]);
 
             // second char
-            dst[1] = SECONDARY_CHAR_BEGIN;
-            dst[1] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
-            dst[1] |= hexchr_to_hex(hex_str[3]);
-            printf("test hex : %x\n", dst[1]);
+            dest[1] = SECONDARY_CHAR_BEGIN;
+            dest[1] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
+            dest[1] |= hexchr_to_hex(hex_str[3]);
+            printf("test hex : %x\n", dest[1]);
 
             // end char
-            dst[2] = END;
+            dest[2] = END;
             break;
         }
 
         case utf8_BasicMultiLingual_t:
         {
             // first char
-            dst[0] = BASIC_MULTILINGUAL_BEGIN;
-            dst[0] |= hexchr_to_hex(hex_str[0]);
-            printf("test hex : %x\n", dst[0]);
+            dest[0] = BASIC_MULTILINGUAL_BEGIN;
+            dest[0] |= hexchr_to_hex(hex_str[0]);
+            printf("test hex : %x\n", dest[0]);
 
             // second char
-            dst[1] = SECONDARY_CHAR_BEGIN;
-            dst[1] |= (hexchr_to_hex(hex_str[1]) << 2);
-            dst[1] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
-            printf("test hex : %x\n", dst[1]);
+            dest[1] = SECONDARY_CHAR_BEGIN;
+            dest[1] |= (hexchr_to_hex(hex_str[1]) << 2);
+            dest[1] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
+            printf("test hex : %x\n", dest[1]);
 
             // third char
-            dst[2] = SECONDARY_CHAR_BEGIN;
-            dst[2] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
-            dst[2] |= hexchr_to_hex(hex_str[3]);
-            printf("test hex : %x\n", dst[2]);
+            dest[2] = SECONDARY_CHAR_BEGIN;
+            dest[2] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
+            dest[2] |= hexchr_to_hex(hex_str[3]);
+            printf("test hex : %x\n", dest[2]);
 
             // end char
-            dst[3] = END;
+            dest[3] = END;
             break;
         }
 
@@ -190,61 +186,60 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             if (str_sz == 5)
             {
                 // first char
-                dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
-                dst[0] |= ((hexchr_to_hex(hex_str[0]) & 0xc) >> 2);
-                printf("test hex : %x\n", dst[0]);
+                dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
+                dest[0] |= ((hexchr_to_hex(hex_str[0]) & 0xc) >> 2);
+                printf("test hex : %x\n", dest[0]);
 
                 // second char
-                dst[1] = SECONDARY_CHAR_BEGIN;
-                dst[1] |= ((hexchr_to_hex(hex_str[0]) & 0x3) << 4);
-                dst[1] |= hexchr_to_hex(hex_str[1]);
-                printf("test hex : %x\n", dst[1]);
+                dest[1] = SECONDARY_CHAR_BEGIN;
+                dest[1] |= ((hexchr_to_hex(hex_str[0]) & 0x3) << 4);
+                dest[1] |= hexchr_to_hex(hex_str[1]);
+                printf("test hex : %x\n", dest[1]);
 
                 // third char
-                dst[2] = SECONDARY_CHAR_BEGIN;
-                dst[2] |= (hexchr_to_hex(hex_str[2]) << 2);
-                dst[2] |= ((hexchr_to_hex(hex_str[3]) & 0xc) >> 2);
-                printf("test hex : %x\n", dst[2]);
+                dest[2] = SECONDARY_CHAR_BEGIN;
+                dest[2] |= (hexchr_to_hex(hex_str[2]) << 2);
+                dest[2] |= ((hexchr_to_hex(hex_str[3]) & 0xc) >> 2);
+                printf("test hex : %x\n", dest[2]);
 
                 // fourth char
-                dst[3] = SECONDARY_CHAR_BEGIN;
-                dst[3] |= ((hexchr_to_hex(hex_str[3]) & 0x3) << 4);
-                dst[3] |= hexchr_to_hex(hex_str[4]);
-                printf("test hex : %x\n", dst[3]);
+                dest[3] = SECONDARY_CHAR_BEGIN;
+                dest[3] |= ((hexchr_to_hex(hex_str[3]) & 0x3) << 4);
+                dest[3] |= hexchr_to_hex(hex_str[4]);
+                printf("test hex : %x\n", dest[3]);
 
                 // end char
-                dst[4] = END;
+                dest[4] = END;
             }
             else if (str_sz == 6)
             {
-                printf("six !\n");
                 // first char
-                dst[0] = OTHERS_PLANES_UNICODE_BEGIN;
-                dst[0] |= ((hexchr_to_hex(hex_str[0]) & 0x1) << 2);
-                dst[0] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
-                printf("test hex : %x\n", dst[0]);
+                dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
+                dest[0] |= ((hexchr_to_hex(hex_str[0]) & 0x1) << 2);
+                dest[0] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
+                printf("test hex : %x\n", dest[0]);
 
                 // second char
-                dst[1] = SECONDARY_CHAR_BEGIN;
-                dst[1] |= ((hexchr_to_hex(hex_str[1]) & 0x3) << 4);
-                dst[1] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
-                dst[1] |= hexchr_to_hex(hex_str[2]);
-                printf("test hex : %x\n", dst[1]);
+                dest[1] = SECONDARY_CHAR_BEGIN;
+                dest[1] |= ((hexchr_to_hex(hex_str[1]) & 0x3) << 4);
+                dest[1] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
+                dest[1] |= hexchr_to_hex(hex_str[2]);
+                printf("test hex : %x\n", dest[1]);
 
                 // third char
-                dst[2] = SECONDARY_CHAR_BEGIN;
-                dst[2] |= (hexchr_to_hex(hex_str[3]) << 2);
-                dst[2] |= ((hexchr_to_hex(hex_str[4]) & 0xc) >> 2);
-                printf("test hex : %x\n", dst[2]);
+                dest[2] = SECONDARY_CHAR_BEGIN;
+                dest[2] |= (hexchr_to_hex(hex_str[3]) << 2);
+                dest[2] |= ((hexchr_to_hex(hex_str[4]) & 0xc) >> 2);
+                printf("test hex : %x\n", dest[2]);
 
                 // fourth char
-                dst[3] = SECONDARY_CHAR_BEGIN;
-                dst[3] |= ((hexchr_to_hex(hex_str[4]) & 0x3) << 4);
-                dst[3] |= hexchr_to_hex(hex_str[5]);
-                printf("test hex : %x\n", dst[3]);
+                dest[3] = SECONDARY_CHAR_BEGIN;
+                dest[3] |= ((hexchr_to_hex(hex_str[4]) & 0x3) << 4);
+                dest[3] |= hexchr_to_hex(hex_str[5]);
+                printf("test hex : %x\n", dest[3]);
 
                 // end char
-                dst[4] = END;
+                dest[4] = END;
             }
 
             break;
@@ -374,6 +369,7 @@ static int32_t utf8codepoint(const char *str)
     const char *s = str;
 
     if (utf8valid(str))
+    {
         if (str == NULL)
             return 0;
 
@@ -393,7 +389,6 @@ static int32_t utf8codepoint(const char *str)
             }
             else if (0xc0 == (0xe0 & *s))
             {
-                printf("two bit : %d\n", s[0]);
                 // two bytes
                 codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
                 s += 2;
@@ -401,11 +396,11 @@ static int32_t utf8codepoint(const char *str)
             else if (0x00 == (0x80 & *s))
             {
                 // one byte
-                printf("one bit : %d\n", s[0]);
                 codepoint = s[0];
                 ++ s;
             }
         }
+    }
 
     return codepoint;
 }
@@ -418,11 +413,11 @@ static void utf8chr(const int32_t codepoint, char *dest)
     }
 }
 
-#undef END
 #undef LATIN_EXTRA_BEGIN
 #undef BASIC_MULTILINGUAL_BEGIN
 #undef OTHERS_PLANES_UNICODE_BEGIN
 #undef SECONDARY_CHAR_BEGIN
+#undef END
 #undef UTF8_BAD_CHAR
 #undef UTF8_GOOD_CHAR
 
