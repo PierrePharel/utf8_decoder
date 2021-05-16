@@ -13,11 +13,17 @@
 #define LoggerPrint(type, format...)\
 {\
     if (type == INFO)\
-        printf("%s%s", INFO_COLOR, "Info : ");\
+        printf("%s%s::%s: ", INFO_COLOR, "Info", __func__);\
     else\
-        printf("%s%s", WARNING_COLOR, "Warning : ");\
+        printf("%s%s::%s: ", WARNING_COLOR, "Warning", __func__);\
     printf(format);\
     printf(RESET_COLOR);\
+}
+
+#define Log(type, format...)\
+{\
+    #ifdef UTF8_DECODER_LOG
+    #endif
 }
 
 #endif
