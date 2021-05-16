@@ -29,7 +29,7 @@ typedef __int32 int32_t;
 #include <stdint.h>
 #endif
 
-#include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "logger.h"
@@ -40,8 +40,8 @@ typedef __int32 int32_t;
 #define SECONDARY_CHAR_BEGIN 0x80
 
 #define END ('\0')
-#define UTF8_BAD_CHAR 0
-#define UTF8_GOOD_CHAR 1
+#define UTF8_BAD_CHAR false
+#define UTF8_GOOD_CHAR true
 
 typedef enum
 {
@@ -52,22 +52,22 @@ typedef enum
     utf8_OutRange_t
 } UTF8Type_t;
 
-static UTF8Type_t utf8type(const char *hex_str, char *dest);
+static UTF8Type_t utf8type(const char *hex_str, unsigned char *dest);
 
 static char hexchr_to_hex(const char hex_chr);
 
-static void decode_to_ustring(const char *hex_str, UTF8Type_t type,unsigned char *dest);
+static void decode_to_ustring(const char *hex_str, unsigned char *dest);
 
-static void utf8decode(const char *hex_str, char* dest);
+static void utf8decode(const char *hex_str, char *dest);
 
-static short utf8valid(const char *str);
+static bool utf8valid(const char *str);
 
 static int32_t utf8codepoint(const char *str);
 
 static void utf8chr(const int32_t codepoint, char *dest);
 
 
-static UTF8Type_t utf8type(const char *hex_str, char *dest)
+static UTF8Type_t utf8type(const char *hex_str, unsigned char *dest)
 {
     int32_t codepoint = 0;
     short shift = 0;
@@ -134,10 +134,23 @@ static char hexchr_to_hex(const char hex_chr)
     return 0;
 }
 
-static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned char *dest)
+static void decode_to_ustring(const char *hex_str, unsigned char *dest)
 {
+    UTF8Type_t type = utf8type(hex_str, NULL);
+
     switch (type)
     {
+        case utf8_USASCII_t:
+        {
+            utf8type(hex_str, dest);
+            dest[1] = END;
+
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(INFO, "%X\n", dest[0]);
+#endif
+            break;
+        }
+
         case utf8_LatinExtra_t:
         {
             // first char
@@ -249,42 +262,29 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
 
             break;
         }
-    }
-}
-
-static void utf8decode(const char *hex_str, char* dest)
-{
-    UTF8Type_t type = utf8type(hex_str, NULL);
-    unsigned char buffer[5] = {0};
-
-    switch (type)
-    {
-        case utf8_USASCII_t:
-        {
-            utf8type(hex_str, dest);
-            dest[1] = END;
-            break;
-        }
-
-        case utf8_LatinExtra_t:
-        case utf8_BasicMultiLingual_t:
-        case utf8_OthersPlanesUnicode_t:
-        {
-            short i = 0;
-            decode_to_ustring(hex_str, type, buffer);
-            for (; buffer[i] != END; ++ i)
-                dest[i] = buffer[i];
-            dest[i] = END;
-            break;
-        }
 
         case utf8_OutRange_t:
-            dest[0] = END;
+        dest[0] = END;
+
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(WARNING, "String is empty, we are out of utf8 range !\n");
+#endif
             break;
     }
+
+
 }
 
-static short utf8valid(const char *str)
+static void utf8decode(const char *hex_str, char *dest)
+{
+    unsigned char buf[5] = {0};
+
+    decode_to_ustring(hex_str, buf);
+    for(short i = 0; buf[i] != END; ++ i)
+        dest[i] = buf[i];
+}
+
+static bool utf8valid(const char *str)
 {
     const char *s = str;
 
@@ -370,13 +370,16 @@ static short utf8valid(const char *str)
 
 static int32_t utf8codepoint(const char *str)
 {
-    int32_t codepoint = -1;
+    int32_t codepoint = 0;
     const char *s = str;
 
     if (utf8valid(str))
     {
         if (str == NULL)
-            return 0;
+        {
+            //Log(WARNING, "Null string !\n");
+            return -1;
+        }
 
         while (*s != END)
         {
@@ -403,6 +406,12 @@ static int32_t utf8codepoint(const char *str)
                 // one byte
                 codepoint = s[0];
                 ++ s;
+            }
+            else
+            {
+#if defined (UTF8_DECODER_LOG)
+            LoggerPrint(WARNING, "Invalid codepoint\n");
+#endif
             }
         }
     }
