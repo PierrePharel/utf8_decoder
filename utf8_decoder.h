@@ -74,37 +74,7 @@ static UTF8Type_t utf8type(const char *hex_str, char *dest)
 
     for (const char *s = hex_str; *s != END; ++ s)
     {
-        switch (*s)
-        {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': codepoint = ((codepoint << shift) | (*s - '0'));
-                    break;
-
-            case 'A':
-            case 'B':
-            case 'C':
-            case 'D':
-            case 'E':
-            case 'F': codepoint = ((codepoint << shift) | (*s - 'A' + 10));
-                    break;
-
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f': codepoint = ((codepoint << shift) | (*s - 'a' + 10));
-                    break;
-        }
-
+        codepoint = ((codepoint << shift) | hexchr_to_hex(*s));
         shift = 4;
     }
 
@@ -136,19 +106,24 @@ static char hexchr_to_hex(const char hex_chr)
 
 static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned char *dest)
 {
+    // those are common to all the utf8 types
+    char c1 = hexchr_to_hex(hex_str[1]);
+    char c2 = hexchr_to_hex(hex_str[2]);
+    char c3 = hexchr_to_hex(hex_str[3]);
+
     switch (type)
     {
         case utf8_LatinExtra_t:
         {
             // first char
             dest[0] = LATIN_EXTRA_BEGIN;
-            dest[0] |= ((hexchr_to_hex(hex_str[1]) & 0x7) << 2);
-            dest[0] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
+            dest[0] |= ((c1 & 0x7) << 2);
+            dest[0] |= ((c2 & 0xc) >> 2);
 
             // second char
             dest[1] = SECONDARY_CHAR_BEGIN;
-            dest[1] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
-            dest[1] |= hexchr_to_hex(hex_str[3]);
+            dest[1] |= ((c2 & 0x3) << 4);
+            dest[1] |= c3;
 
             // end char
             dest[2] = END;
@@ -161,19 +136,21 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
 
         case utf8_BasicMultiLingual_t:
         {
+            char c0 = hexchr_to_hex(hex_str[0]);
+
             // first char
             dest[0] = BASIC_MULTILINGUAL_BEGIN;
-            dest[0] |= hexchr_to_hex(hex_str[0]);
+            dest[0] |= c0;
 
             // second char
             dest[1] = SECONDARY_CHAR_BEGIN;
-            dest[1] |= (hexchr_to_hex(hex_str[1]) << 2);
-            dest[1] |= ((hexchr_to_hex(hex_str[2]) & 0xc) >> 2);
+            dest[1] |= (c1 << 2);
+            dest[1] |= ((c2 & 0xc) >> 2);
 
             // third char
             dest[2] = SECONDARY_CHAR_BEGIN;
-            dest[2] |= ((hexchr_to_hex(hex_str[2]) & 0x3) << 4);
-            dest[2] |= hexchr_to_hex(hex_str[3]);
+            dest[2] |= ((c2 & 0x3) << 4);
+            dest[2] |= c3;
 
             // end char
             dest[3] = END;
@@ -188,26 +165,29 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
         {
             size_t str_sz = strlen(hex_str);
 
+            char c0 = hexchr_to_hex(hex_str[0]);
+            char c4 = hexchr_to_hex(hex_str[4]);
+
             if (str_sz == 5)
             {
                 // first char
                 dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
-                dest[0] |= ((hexchr_to_hex(hex_str[0]) & 0xc) >> 2);
+                dest[0] |= ((c0 & 0xc) >> 2);
 
                 // second char
                 dest[1] = SECONDARY_CHAR_BEGIN;
-                dest[1] |= ((hexchr_to_hex(hex_str[0]) & 0x3) << 4);
-                dest[1] |= hexchr_to_hex(hex_str[1]);
+                dest[1] |= ((c0 & 0x3) << 4);
+                dest[1] |= c1;
 
                 // third char
                 dest[2] = SECONDARY_CHAR_BEGIN;
-                dest[2] |= (hexchr_to_hex(hex_str[2]) << 2);
-                dest[2] |= ((hexchr_to_hex(hex_str[3]) & 0xc) >> 2);
+                dest[2] |= (c2 << 2);
+                dest[2] |= ((c3 & 0xc) >> 2);
 
                 // fourth char
                 dest[3] = SECONDARY_CHAR_BEGIN;
-                dest[3] |= ((hexchr_to_hex(hex_str[3]) & 0x3) << 4);
-                dest[3] |= hexchr_to_hex(hex_str[4]);
+                dest[3] |= ((c3 & 0x3) << 4);
+                dest[3] |= c4;
 
                 // end char
                 dest[4] = END;
@@ -218,26 +198,28 @@ static void decode_to_ustring(const char *hex_str, UTF8Type_t type, unsigned cha
             }
             else if (str_sz == 6)
             {
+                char c5 = hexchr_to_hex(hex_str[5]);
+
                 // first char
                 dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
-                dest[0] |= ((hexchr_to_hex(hex_str[0]) & 0x1) << 2);
-                dest[0] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
+                dest[0] |= ((c0 & 0x1) << 2);
+                dest[0] |= ((c1 & 0xc) >> 2);
 
                 // second char
                 dest[1] = SECONDARY_CHAR_BEGIN;
-                dest[1] |= ((hexchr_to_hex(hex_str[1]) & 0x3) << 4);
-                dest[1] |= ((hexchr_to_hex(hex_str[1]) & 0xc) >> 2);
-                dest[1] |= hexchr_to_hex(hex_str[2]);
+                dest[1] |= ((c1 & 0x3) << 4);
+                dest[1] |= ((c1 & 0xc) >> 2);
+                dest[1] |= c2;
 
                 // third char
                 dest[2] = SECONDARY_CHAR_BEGIN;
-                dest[2] |= (hexchr_to_hex(hex_str[3]) << 2);
-                dest[2] |= ((hexchr_to_hex(hex_str[4]) & 0xc) >> 2);
+                dest[2] |= (c3 << 2);
+                dest[2] |= ((c4 & 0xc) >> 2);
 
                 // fourth char
                 dest[3] = SECONDARY_CHAR_BEGIN;
-                dest[3] |= ((hexchr_to_hex(hex_str[4]) & 0x3) << 4);
-                dest[3] |= hexchr_to_hex(hex_str[5]);
+                dest[3] |= ((c4 & 0x3) << 4);
+                dest[3] |= c5;
 
                 // end char
                 dest[4] = END;
