@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-#define LoggerPrint(type, format...)\
+#define Log(type, format...)\
 {\
     if (type == INFO)\
         printf("%s%s::%s: ", INFO_COLOR, "Info", __func__);\
@@ -18,12 +18,6 @@
         printf("%s%s::%s: ", WARNING_COLOR, "Warning", __func__);\
     printf(format);\
     printf(RESET_COLOR);\
-}
-
-#define Log(type, format...)\
-{\
-    #ifdef UTF8_DECODER_LOG
-    #endif
 }
 
 #endif
