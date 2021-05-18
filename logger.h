@@ -10,13 +10,14 @@
 
 #include <stdio.h>
 
-#define LoggerPrint(type, format...)\
+#define Log(type, format...)\
 {\
     if (type == INFO)\
-        printf("%s%s", INFO_COLOR, "Info : ");\
+        printf("%s%s::%s: ", INFO_COLOR, "Info", __func__);\
     else\
-        printf("%s%s", WARNING_COLOR, "Warning : ");\
+        printf("%s%s::%s: ", WARNING_COLOR, "Warning", __func__);\
     printf(format);\
+    printf("\n");\
     printf(RESET_COLOR);\
 }
 
