@@ -32,7 +32,9 @@ typedef __int32 int32_t;
 #include <stdbool.h>
 #include <string.h>
 
+#if defined (UTF8_DECODER_LOG)
 #include "logger.h"
+#endif
 
 #define LATIN_EXTRA_BEGIN 0xc0
 #define BASIC_MULTILINGUAL_BEGIN 0xe0
