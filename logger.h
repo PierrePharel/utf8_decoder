@@ -17,6 +17,7 @@
     else\
         printf("%s%s::%s: ", WARNING_COLOR, "Warning", __func__);\
     printf(format);\
+    printf("\n");\
     printf(RESET_COLOR);\
 }
 

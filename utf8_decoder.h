@@ -148,7 +148,7 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
             dest[1] = END;
 
 #if defined (UTF8_DECODER_LOG)
-            Log(INFO, "%X\n", dest[0]);
+            Log(INFO, "%X", dest[0]);
 #endif
             break;
         }
@@ -169,7 +169,7 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
             dest[2] = END;
 
 #if defined (UTF8_DECODER_LOG)
-            Log(INFO, "%X %X\n", dest[0], dest[1]);
+            Log(INFO, "%X %X", dest[0], dest[1]);
 #endif
             break;
         }
@@ -194,7 +194,7 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
             dest[3] = END;
 
 #if defined (UTF8_DECODER_LOG)
-            Log(INFO, "%X %X %X\n", dest[0], dest[1], dest[2]);
+            Log(INFO, "%X %X %X", dest[0], dest[1], dest[2]);
 #endif
             break;
         }
@@ -228,7 +228,7 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
                 dest[4] = END;
 
 #if defined (UTF8_DECODER_LOG)
-            Log(INFO, "%X %X %X %X\n", dest[0], dest[1], dest[2],  dest[3]);
+            Log(INFO, "%X %X %X %X", dest[0], dest[1], dest[2],  dest[3]);
 #endif
             }
             else if (str_sz == 6)
@@ -258,7 +258,7 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
                 dest[4] = END;
 
 #if defined (UTF8_DECODER_LOG)
-            Log(INFO, "%X %X %X %X\n", dest[0], dest[1], dest[2],  dest[3]);
+            Log(INFO, "%X %X %X %X", dest[0], dest[1], dest[2],  dest[3]);
 #endif
             }
 
@@ -269,7 +269,7 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
         dest[0] = END;
 
 #if defined (UTF8_DECODER_LOG)
-            Log(WARNING, "String is empty, we are out of utf8 range !\n");
+            Log(WARNING, "String is empty, we are out of utf8 range !");
 #endif
             break;
     }
@@ -379,7 +379,9 @@ static int32_t utf8codepoint(const char *str)
     {
         if (str == NULL)
         {
-            //Log(WARNING, "Null string !\n");
+#if defined (UTF8_DECODER_LOG)
+            Log(WARNING, "Null string");
+#endif
             return -1;
         }
 
@@ -412,7 +414,7 @@ static int32_t utf8codepoint(const char *str)
             else
             {
 #if defined (UTF8_DECODER_LOG)
-            Log(WARNING, "Invalid codepoint\n");
+            Log(WARNING, "Invalid codepoint");
 #endif
             }
         }
