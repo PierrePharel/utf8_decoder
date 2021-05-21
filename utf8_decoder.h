@@ -36,10 +36,10 @@ typedef __int32 int32_t;
 #include "logger.h"
 #endif
 
-#define LATIN_EXTRA_BEGIN 0xc0
-#define BASIC_MULTILINGUAL_BEGIN 0xe0
-#define OTHERS_PLANES_UNICODE_BEGIN 0xf0
-#define SECONDARY_CHAR_BEGIN 0x80
+#define LATIN_EXTRA_BEGIN 0xc0 // 0b110xxxxx
+#define BASIC_MULTILINGUAL_BEGIN 0xe0 // 0b1110xxxx
+#define OTHERS_PLANES_UNICODE_BEGIN 0xf0 // 0b11110xxxx
+#define SECONDARY_CHAR_BEGIN 0x80 // 0b10xxxxxx
 
 #define END ('\0')
 #define UTF8_BAD_CHAR false
@@ -102,7 +102,7 @@ static char hexchr_to_hex(const char hex_chr)
         return hex_chr - 55;
     if ('a' <= hex_chr && hex_chr <= 'f')
         return hex_chr - 87;
-    return 0;
+    return -1;
 }
 
 static void utf8decode(const char *hex_str, char *dest)
@@ -410,8 +410,23 @@ static void utf8chr(const int32_t codepoint, char *dest)
     else if (codepoint > 0x007f && codepoint <= 0x07ff)
     {
         dest[0] = LATIN_EXTRA_BEGIN;
+        dest[1] = SECONDARY_CHAR_BEGIN;
+
+        if (codepoint <= 0xff)
+        {
+            dest[0] |= ((codepoint & 0xc0) >> 6);
+            dest[1] |= (codepoint & 0x3f);
+            dest[2] = END;
+        }
+        else
+        {
+            dest[0] |= ((codepoint >> 8) << 2);
+            dest[0] |= ((codepoint & 0x0c0) >> 6);
+            dest[1] |= (codepoint & 0x03f);
+            dest[2] = END;
+        }
 #if defined (UTF8_DECODER_LOG)
-            Log(INFO, "%X", codepoint);
+            Log(INFO, "%X %X", dest[0], dest[1]);
 #endif
     }
     else if (codepoint > 0x07ff && codepoint <= 0xffff)
