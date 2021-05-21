@@ -54,11 +54,10 @@ typedef enum
     utf8_OutRange_t
 } UTF8Type_t;
 
-static UTF8Type_t utf8type(const char *hex_str, unsigned char *dest);
 
 static char hexchr_to_hex(const char hex_chr);
 
-static void decode_to_ustring(const char *hex_str, unsigned char *dest);
+static UTF8Type_t utf8type(const char *hex_str, char *dest);
 
 static void utf8decode(const char *hex_str, char *dest);
 
@@ -69,7 +68,7 @@ static int32_t utf8codepoint(const char *str);
 static void utf8chr(const int32_t codepoint, char *dest);
 
 
-static UTF8Type_t utf8type(const char *hex_str, unsigned char *dest)
+static UTF8Type_t utf8type(const char *hex_str, char *dest)
 {
     int32_t codepoint = 0;
     short shift = 0;
@@ -106,7 +105,7 @@ static char hexchr_to_hex(const char hex_chr)
     return 0;
 }
 
-static void decode_to_ustring(const char *hex_str, unsigned char *dest)
+static void utf8decode(const char *hex_str, char *dest)
 {
     UTF8Type_t type = utf8type(hex_str, NULL);
     // those are common to all the utf8 types
@@ -258,21 +257,17 @@ static void decode_to_ustring(const char *hex_str, unsigned char *dest)
 
 }
 
-static void utf8decode(const char *hex_str, char *dest)
-{
-    unsigned char buf[5] = {0};
-
-    decode_to_ustring(hex_str, buf);
-    for(short i = 0; buf[i] != END; ++ i)
-        dest[i] = buf[i];
-}
-
 static bool utf8valid(const char *str)
 {
     const char *s = str;
 
     if (str == NULL)
-        return UTF8_GOOD_CHAR;
+    {
+#if defined (UTF8_DECODER_LOG)
+            Log(WARNING, "Null string");
+#endif
+        return -1;
+    }
 
     while (*s != END)
     {
@@ -397,6 +392,7 @@ static int32_t utf8codepoint(const char *str)
 #if defined (UTF8_DECODER_LOG)
             Log(WARNING, "Invalid codepoint");
 #endif
+                return -1;
             }
         }
     }
@@ -406,9 +402,31 @@ static int32_t utf8codepoint(const char *str)
 
 static void utf8chr(const int32_t codepoint, char *dest)
 {
-    if (codepoint <= 0x10ffff)
+    if (codepoint >= 0x0000 && codepoint <= 0x007f)
+    {
+        dest[0] = codepoint;
+        dest[1] = END;
+    }
+    else if (codepoint > 0x007f && codepoint <= 0x07ff)
+    {
+        dest[0] = LATIN_EXTRA_BEGIN;
+#if defined (UTF8_DECODER_LOG)
+            Log(INFO, "%X", codepoint);
+#endif
+    }
+    else if (codepoint > 0x07ff && codepoint <= 0xffff)
     {
 
+    }
+    else if (codepoint > 0xffff && codepoint <= 0x10ffff)
+    {
+
+    }
+    else
+    {
+#if defined (UTF8_DECODER_LOG)
+            Log(WARNING, "We are out of utf8 range !");
+#endif
     }
 }
 
