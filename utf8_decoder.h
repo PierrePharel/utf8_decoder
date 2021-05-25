@@ -406,41 +406,70 @@ static void utf8chr(const int32_t codepoint, char *dest)
     {
         dest[0] = codepoint;
         dest[1] = END;
+#if defined (UTF8_DECODER_LOG)
+            Log(INFO, "%X", dest[0]);
+#endif
     }
     else if (codepoint > 0x007f && codepoint <= 0x07ff)
     {
         dest[0] = LATIN_EXTRA_BEGIN;
         dest[1] = SECONDARY_CHAR_BEGIN;
 
-        if (codepoint <= 0xff)
-        {
-            dest[0] |= ((codepoint & 0xc0) >> 6);
-            dest[1] |= (codepoint & 0x3f);
-            dest[2] = END;
-        }
-        else
-        {
-            dest[0] |= ((codepoint >> 8) << 2);
-            dest[0] |= ((codepoint & 0x0c0) >> 6);
-            dest[1] |= (codepoint & 0x03f);
-            dest[2] = END;
-        }
+        if (codepoint > 0xff)
+            dest[0] |= (codepoint >> 6);
+        dest[0] |= ((codepoint & 0xc0) >> 6);
+        dest[1] |= (codepoint & 0x3f);
+
+        dest[2] = END;
 #if defined (UTF8_DECODER_LOG)
             Log(INFO, "%X %X", dest[0], dest[1]);
 #endif
     }
     else if (codepoint > 0x07ff && codepoint <= 0xffff)
     {
+        dest[0] = BASIC_MULTILINGUAL_BEGIN;
+        dest[1] = SECONDARY_CHAR_BEGIN;
+        dest[2] = SECONDARY_CHAR_BEGIN;
 
+        if (codepoint > 0xfff)
+            dest[0] |= ((codepoint & 0xf000) >> 12);
+        dest[1] |= ((codepoint & 0xf00) >> 6);
+        dest[1] |= ((codepoint & 0xf0) >> 6);
+        dest[2] |= (codepoint & 0x30);
+        dest[2] |= (codepoint & 0xf);
+
+        dest[3] = END;
+#if defined (UTF8_DECODER_LOG)
+            Log(INFO, "%X %X %X", dest[0], dest[1], dest[2]);
+#endif
     }
     else if (codepoint > 0xffff && codepoint <= 0x10ffff)
     {
+        dest[0] = OTHERS_PLANES_UNICODE_BEGIN;
+        dest[1] = SECONDARY_CHAR_BEGIN;
+        dest[2] = SECONDARY_CHAR_BEGIN;
+        dest[3] = SECONDARY_CHAR_BEGIN;
 
+        if (codepoint > 0xfffff)
+            dest[0] |= ((codepoint & 0x100000) >> 18);
+        dest[0] |= ((codepoint & 0xc0000) >> 18);
+        dest[1] |= ((codepoint & 0x30000) >> 12);
+        dest[1] |= ((codepoint & 0xf000) >> 12);
+        dest[2] |= ((codepoint & 0xf00) >> 6);
+        dest[2] |= ((codepoint & 0xc0) >> 6);
+        dest[3] |= (codepoint & 0x30);
+        dest[3] |= (codepoint & 0xf);
+
+        dest[4] = END;
+#if defined (UTF8_DECODER_LOG)
+            Log(INFO, "%X %X %X %X", dest[0], dest[1], dest[2], dest[3]);
+#endif
     }
     else
     {
+        dest[0] = END;
 #if defined (UTF8_DECODER_LOG)
-            Log(WARNING, "We are out of utf8 range !");
+            Log(WARNING, "String is empty, we are out of utf8 range !");
 #endif
     }
 }
