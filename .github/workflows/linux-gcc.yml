@@ -35,5 +35,5 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        cd tests && cd build
+        cd tests
         cmake --build build --config $BUILD_TYPE
