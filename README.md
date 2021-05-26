@@ -18,19 +18,17 @@ static char hexchr_to_hex(const char hex_chr);
 
 Return a char decimal value greater than or equal to zero and less than zero if char is out of range
 
-Convert hexadecimal char beetwen '0'-'F'('a'-'z' & 'A'-'Z') in decimal value
-
+Convert hexadecimal char beetwen '0' - 'F' ('a'-'z' & 'A'-'Z') in decimal value
 
 ```c
 static Utf8Type utf8type(const char* hex_str, int32_t* cdp);
 ```
 
-Return a the Utf8Type defined above
+Return a the Utf8Type
 
 But you can get codepoint (decimal value) of hexadecimal string if you pass an int32_t pointer instead of NULL
 
 Convert hexadecimal string in a decimal value, and determinate what is the range of utf8 string
-
 
 ```c
 static void utf8decode(const char* hex_str, char* dest);
@@ -49,7 +47,6 @@ static bool utf8valid(const char* str);
 Return a bool (true, if valid and false otherwise)
 
 Check if str is a valid utf8 string
-
 
 ```c
 static int32_t utf8codepoint(const char* str);
