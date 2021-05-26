@@ -22,7 +22,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(utf8_decoder LANGUAGES CXX C)
+project(utf8_decoder)
 
 if(CMAKE_COMPILER_IS_GNUC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
