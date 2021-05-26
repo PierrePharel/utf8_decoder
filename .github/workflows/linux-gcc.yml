@@ -29,11 +29,11 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
+        cd tests && mkdir build
         cmake -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
 
     - name: Build
       shell: bash
       run: |
-        cd tests
-        mkdir build
+        cd tests && cd build
         cmake --build build --config $BUILD_TYPE
