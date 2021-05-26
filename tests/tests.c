@@ -28,17 +28,41 @@
 
 int main()
 {
-    char s[5] = {0};
+    char dst1[5];
+    char dst2[5];
+    int codepoint;
 
-    utf8decode("0083", s);
-    printf("result : %s\n", s);
-    /*
-    BEGIN_TESTS
+    // one byte
+    utf8decode("0024", dst1);
+    printf("decoded result : %s\n", dst1);
+    codepoint = utf8codepoint(dst1);
+    printf("decoded codepoint : %d\n", codepoint);
+    utf8chr(codepoint, dst2);
+    printf("chr codepoint : %s\n", dst2);
 
-    TEST(0, utf8codepoint(NULL), "null codepoint");
-    TEST(65, utf8codepoint("A"), "codepoint A");
+    // two byte
+    utf8decode("00A2", dst1);
+    printf("decoded result : %s\n", dst1);
+    codepoint = utf8codepoint(dst1);
+    printf("decoded codepoint : %d\n", codepoint);
+    utf8chr(codepoint, dst2);
+    printf("chr codepoint : %s\n", dst2);
 
-    END_TESTS
-    */
+    // three byte
+    utf8decode("D55C", dst1);
+    printf("decoded result : %s\n", dst1);
+    codepoint = utf8codepoint(dst1);
+    printf("decoded codepoint : %d\n", codepoint);
+    utf8chr(codepoint, dst2);
+    printf("chr codepoint : %s\n", dst2);
+
+    // four byte
+    utf8decode("1F47A", dst1);
+    printf("decoded result : %s\n", dst1);
+    codepoint = utf8codepoint(dst1);
+    printf("decoded codepoint : %d\n", codepoint);
+    utf8chr(codepoint, dst2);
+    printf("chr codepoint : %s\n", dst2);
+
     return 0;
 }

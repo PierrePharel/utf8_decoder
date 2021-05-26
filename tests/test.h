@@ -1,6 +1,8 @@
 #ifndef UTF8_DECODER_TEST_H
 #define UTF8_DECODER_TEST_H
 
+#include <stdio.h>
+
 #define REGISTER_TEST number_of_tests++
 #define RUN(e, r) t = (e == r); passed_tests += t
 #define PRINT(s) printf("test %s: %i\n", s, t);
@@ -13,4 +15,4 @@
 #define BEGIN_TESTS int number_of_tests = 0; int passed_tests = 0; int t;
 #define END_TESTS PRINT_END; RETURN_END;
 
-#endif //UTF8_DECODER_TEST_H
+#endif
