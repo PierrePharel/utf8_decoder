@@ -37,3 +37,8 @@ jobs:
       run: |
         cd tests
         cmake --build build --config $BUILD_TYPE
+
+    - name: Test
+      shell: bash
+      run: |
+        ./tests/build/utf8d_test_c
