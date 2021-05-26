@@ -47,51 +47,65 @@ typedef __int32 int32_t;
 
 typedef enum
 {
-    utf8_USASCII_t,
-    utf8_LatinExtra_t,
-    utf8_BasicMultiLingual_t,
-    utf8_OthersPlanesUnicode_t,
-    utf8_OutRange_t
-} UTF8Type_t;
+    US_ASCII,
+    LatinExtra,
+    BasicMultiLingual,
+    OthersPlanesUnicode,
+    OutRange
+} Utf8Type;
 
-
+// Return a char decimal value greater than or equal to zero and less than zero if char is out of range
+// Convert hexadecimal char beetwen '0'-'F'('a'-'z' & 'A'-'Z') in decimal value
 static char hexchr_to_hex(const char hex_chr);
 
-static UTF8Type_t utf8type(const char *hex_str, char *dest);
+// Return a the Utf8Type defined above
+// But you can get codepoint (decimal value) of hexadecimal string if you pass an int32_t pointer instead of NULL
+// Convert hexadecimal string in a decimal value, and determinate what is the range of utf8 string
+static Utf8Type utf8type(const char* hex_str, int32_t* cdp);
 
-static void utf8decode(const char *hex_str, char *dest);
+// Convert hexadecimal utf8 string into usable utf8 string and store it in dest
+// dest will be empty if hexadecimal string is invalid or out of range
+// NB: min size of dest must be 2 and max 5 with null char
+static void utf8decode(const char* hex_str, char* dest);
 
-static bool utf8valid(const char *str);
+// Return a bool (true, if valid and false otherwise)
+// Check if str is a valid utf8 string
+static bool utf8valid(const char* str);
 
-static int32_t utf8codepoint(const char *str);
+// Return codepoint greater than or equal to zero and less than zero if char is out of range or if string is NULL
+// Convert utf8 string in codepoint (decimal value)
+static int32_t utf8codepoint(const char* str);
 
-static void utf8chr(const int32_t codepoint, char *dest);
+// Convert codepoint into usable utf8 string and store it in dest
+// dest will be empty if hexadecimal string is invalid or out of range
+// NB: min size of dest must be 2 and max 5 with null char
+static void utf8chr(const int32_t codepoint, char* dest);
 
 
-static UTF8Type_t utf8type(const char *hex_str, char *dest)
+static Utf8Type utf8type(const char* hex_str, int32_t* cdp)
 {
     int32_t codepoint = 0;
     short shift = 0;
 
-    for (const char *s = hex_str; *s != END; ++ s)
+    for (const char* s = hex_str; *s != END; ++ s)
     {
         codepoint = ((codepoint << shift) | hexchr_to_hex(*s));
         shift = 4;
     }
 
-    if (dest != NULL)
-        dest[0] = codepoint;
+    if (cdp != NULL)
+        *cdp = codepoint;
 
     if (codepoint >= 0x0000 && codepoint <= 0x007f)
-        return utf8_USASCII_t;
+        return US_ASCII;
     else if (codepoint > 0x007f && codepoint <= 0x07ff)
-        return utf8_LatinExtra_t;
+        return LatinExtra;
     else if (codepoint > 0x07ff && codepoint <= 0xffff)
-        return utf8_BasicMultiLingual_t;
+        return BasicMultiLingual;
     else if (codepoint > 0xffff && codepoint <= 0x10ffff)
-        return utf8_OthersPlanesUnicode_t;
+        return OthersPlanesUnicode;
 
-    return utf8_OutRange_t;
+    return OutRange;
 }
 
 static char hexchr_to_hex(const char hex_chr)
