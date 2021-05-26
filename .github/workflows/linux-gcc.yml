@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: recursive
+        submodules: true
 
     - name: Update compilers
       shell: bash
@@ -31,7 +31,7 @@ jobs:
       run: |
         cd tests && mkdir build
         cmake -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
-
+ 
     - name: Build
       shell: bash
       run: |
