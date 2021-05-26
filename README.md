@@ -98,7 +98,7 @@ int main()
     codepoint = utf8codepoint(dst1);
     printf("decoded codepoint : %d\n", codepoint); // codepoint : 54620
     utf8chr(codepoint, dst2);
-    printf("chr codepoint : %s\n", dst2); // decode : 한
+    printf("chr codepoint : %s\n", dst2); // decoded : 한
 
     // four byte
     utf8decode("1F47A", dst1);
@@ -106,7 +106,7 @@ int main()
     codepoint = utf8codepoint(dst1);
     printf("decoded codepoint : %d\n", codepoint); // codepoint : 128122
     utf8chr(codepoint, dst2);
-    printf("chr codepoint : %s\n", dst2); // decode : 👺
+    printf("chr codepoint : %s\n", dst2); // decoded : 👺
 
     return 0;
 
