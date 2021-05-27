@@ -1,4 +1,4 @@
-name: "CMake - Linux-GCC"
+name: "CMake - Linux-Clang"
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
 
 env:
   BUILD_TYPE: Release
-  CC: gcc-8
-  CXX: g++-8
+  CC: clang
+  CXX: clang++
 
 jobs:
   build:
@@ -18,13 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: true
+        submodules: recursive
 
     - name: Update compilers
       shell: bash
       run: |
-        sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
-        sudo apt-get -yq install g++-8 gcc-8
+        sudo apt-get install -y clang-10 lld-10 libc++-10-dev libc++abi-10-dev clang-tools-10
 
     - name: Configure CMake
       shell: bash
