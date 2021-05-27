@@ -24,7 +24,7 @@ Convert hexadecimal char beetwen '0' - 'F' ('a'-'z' & 'A'-'Z') in decimal value
 static Utf8Type utf8type(const char* hex_str, int32_t* cdp);
 ```
 
-Return a the Utf8Type
+Return the Utf8Type
 
 But you can get codepoint (decimal value) of hexadecimal string if you pass an int32_t pointer instead of NULL
 
