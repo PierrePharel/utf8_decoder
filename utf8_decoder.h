@@ -261,8 +261,7 @@ static void utf8decode(const char* hex_str, char* dest)
         }
 
         case OutRange:
-            dest[0] = END;
-
+            dest = NULL;
 #if defined (UTF8_DECODER_LOG)
             Log(WARNING, "String is empty, we are out of utf8 range !");
 #endif
@@ -281,7 +280,7 @@ static bool utf8valid(const char *str)
 #if defined (UTF8_DECODER_LOG)
         Log(WARNING, "Null string");
 #endif
-        return -1;
+        return UTF8_BAD_CHAR;
     }
 
     while (*s != END)
