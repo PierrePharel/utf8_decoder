@@ -42,4 +42,4 @@ jobs:
     - name: Test
       shell: bash
       run: |
-        ./tests/build/utf8d_test_c
+        ./tests/build/utf8d_test_c.exe
