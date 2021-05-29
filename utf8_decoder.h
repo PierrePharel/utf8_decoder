@@ -23,7 +23,7 @@
 #ifndef UTF8_DECODER_H
 #define UTF8_DECODER_H
 
-#if defined (_MSC_VER) && (_MSC_VER < 1920)
+#if defined (_MSC_VER)
 typedef __int32 int32_t;
 #pragma warning (disable: 4309)
 #else
