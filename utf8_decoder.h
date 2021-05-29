@@ -25,12 +25,12 @@
 
 #if defined (_MSC_VER) && (_MSC_VER < 1920)
 typedef __int32 int32_t;
+#pragma warning (disable: 4309)
 #else
 #include <stdint.h>
 #endif
 
 #include <stdbool.h>
-#include <string.h>
 
 #if defined (UTF8_DECODER_LOG)
 #include "logger.h"
