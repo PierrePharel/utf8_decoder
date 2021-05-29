@@ -25,7 +25,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: recursive
+        submodules: true
 
     - name: Configure CMake
       shell: bash
@@ -42,4 +42,4 @@ jobs:
     - name: Test
       shell: bash
       run: |
-        ./tests/build/utf8d_test_c.exe
+        ./tests/build/Release/utf8d_test_c.exe
