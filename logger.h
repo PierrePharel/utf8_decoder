@@ -13,9 +13,9 @@
 #define Log(type, ...)\
 {\
     if (type == INFO)\
-        printf("%s%s::%s: ", INFO_COLOR, "info", __func__);\
+        printf("%s%s: ", INFO_COLOR, __func__);\
     else\
-        printf("%s%s::%s: ", WARNING_COLOR, "warning", __func__);\
+        printf("%s%s: ", WARNING_COLOR, __func__);\
     printf(__VA_ARGS__);\
     printf("\n");\
     printf(RESET_COLOR);\
