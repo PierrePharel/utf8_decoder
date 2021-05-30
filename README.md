@@ -13,7 +13,7 @@ The current supported compilers are gcc, clang, MSVC.
 ## API function docs
 
 ```c
-static char hexchr_to_hex(const char hex_chr);
+char hexchr_to_hex(const char hex_chr);
 ```
 
 Return a char decimal value greater than or equal to zero and less than zero if char is out of range
@@ -21,7 +21,7 @@ Return a char decimal value greater than or equal to zero and less than zero if 
 Convert hexadecimal char beetwen '0' - 'F' ('a'-'z' & 'A'-'Z') in decimal value
 
 ```c
-static Utf8Type utf8type(const char* hex_str, int32_t* cdp);
+Utf8Type utf8type(const char* hex_str, int32_t* cdp);
 ```
 
 Return the Utf8Type
@@ -31,7 +31,7 @@ But you can get codepoint (decimal value) of hexadecimal string if you pass an i
 Convert hexadecimal string in a decimal value, and determinate what is the range of utf8 string
 
 ```c
-static void utf8decode(const char* hex_str, char* dest);
+void utf8decode(const char* hex_str, char* dest);
 ```
 
 Convert hexadecimal utf8 string into usable utf8 string and store it in dest
@@ -41,7 +41,7 @@ dest will be empty if hexadecimal string is invalid or out of range
 NB: min size of dest must be 2 and max 5 with null char
 
 ```c
-static bool utf8valid(const char* str);
+bool utf8valid(const char* str);
 ```
 
 Return a bool (true, if valid and false otherwise)
@@ -49,14 +49,14 @@ Return a bool (true, if valid and false otherwise)
 Check if str is a valid utf8 string
 
 ```c
-static int32_t utf8codepoint(const char* str);
+int32_t utf8codepoint(const char* str);
 ```
 Return codepoint greater than or equal to zero and less than zero if char is out of range or if string is NULL
 
 Convert utf8 string in codepoint (decimal value)
 
 ```c
-static void utf8chr(const int32_t codepoint, char* dest);
+void utf8chr(const int32_t codepoint, char* dest);
 ```
 Convert codepoint into usable utf8 string and store it in dest
 
