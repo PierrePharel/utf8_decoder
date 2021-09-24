@@ -8,7 +8,7 @@ Just `#include "utf8_decoder.h"` in your code!
 
 The current supported platforms are Linux, macOS and Windows.
 
-The current supported compilers are gcc, clang, MSVC.
+The current supported compilers are GCC, CLANG, MSVC.
 
 ## API function docs
 
