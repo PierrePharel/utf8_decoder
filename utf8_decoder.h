@@ -119,7 +119,7 @@ static char hexchr_to_hex(const char hex_chr)
     return -1;
 }
 
-static void utf8decode(const char* hex_str, char* dest)
+inline static void utf8decode(const char* hex_str, char* dest)
 {
     int32_t cdp = 0;
     Utf8Type type = utf8type(hex_str, &cdp);
@@ -360,7 +360,7 @@ static bool utf8valid(const char *str)
     return UTF8_GOOD_CHAR;
 }
 
-static int32_t utf8codepoint(const char* str)
+inline static int32_t utf8codepoint(const char* str)
 {
     int32_t codepoint = 0;
     const char* s = str;
@@ -414,7 +414,7 @@ static int32_t utf8codepoint(const char* str)
     return codepoint;
 }
 
-static void utf8chr(const int32_t codepoint, char* dest)
+inline static void utf8chr(const int32_t codepoint, char* dest)
 {
     if (codepoint >= 0x0000 && codepoint <= 0x007f)
     {
