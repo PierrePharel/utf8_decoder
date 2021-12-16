@@ -21,48 +21,52 @@
 // THE SOFTWARE.
 
 #include <stdio.h>
+#include <string.h>
 #define UTF8_DECODER_LOG
 #include <utf8_decoder.h>
 #include "test.h"
 
 
-int main()
+void hex_format (char* str)
 {
-    char dst1[5];
-    char dst2[5];
-    int codepoint;
+    char tmp[5];
+    int sz = strlen (str);
+    int filler_sz = 4 - sz;
+    int i = 0;
 
-    // one byte
-    utf8decode("0024", dst1);
-    printf("decoded result : %s\n", dst1);
-    codepoint = utf8codepoint(dst1);
-    printf("decoded codepoint : %d\n", codepoint);
-    utf8chr(codepoint, dst2);
-    printf("chr codepoint : %s\n", dst2);
+    strcpy (tmp, str);
 
-    // two byte
-    utf8decode("00A2", dst1);
-    printf("decoded result : %s\n", dst1);
-    codepoint = utf8codepoint(dst1);
-    printf("decoded codepoint : %d\n", codepoint);
-    utf8chr(codepoint, dst2);
-    printf("chr codepoint : %s\n", dst2);
+    while (i < filler_sz)
+    {
+        str[i] = '0';
+        i ++;
+    }
 
-    // three byte
-    utf8decode("D55C", dst1);
-    printf("decoded result : %s\n", dst1);
-    codepoint = utf8codepoint(dst1);
-    printf("decoded codepoint : %d\n", codepoint);
-    utf8chr(codepoint, dst2);
-    printf("chr codepoint : %s\n", dst2);
+    for (; i < (sz + filler_sz); ++ i)
+        str[i] = tmp[i - filler_sz];
 
-    // four byte
-    utf8decode("1F47A", dst1);
-    printf("decoded result : %s\n", dst1);
-    codepoint = utf8codepoint(dst1);
-    printf("decoded codepoint : %d\n", codepoint);
-    utf8chr(codepoint, dst2);
-    printf("chr codepoint : %s\n", dst2);
+    str[5] = '\0';
+}
+
+int main (int argc, char** argv)
+{
+    char out[5];
+    char in[5];
+
+    printf ("#===============================#\n");
+    printf ("#             Tests             #\n");
+    printf ("#===============================#\n");
+
+    for (int i = 0; i < 0x04ff; i ++)
+    {
+        sprintf (in, "%X", i);
+        hex_format(in);
+        printf ("in : %s\n", in);
+        utf8decode (in, out);
+        printf ("in : %s => out : %s\n", in, out);
+    }
+
+    printf ("#===============================#\n");
 
     return 0;
 }
