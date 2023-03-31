@@ -8,7 +8,6 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
@@ -22,9 +21,9 @@
 
 #include <stddef.h>
 
+//#define UTF8_DECODER_LOG
 #include "utf8_decoder.h"
 #include "logger.h"
-
 
 Utf8Type utf8type(const utf8chr_t* hex_str, int32_t* cdp)
 {
@@ -81,9 +80,7 @@ void utf8decode(const utf8chr_t* hex_str, utf8chr_t* dest)
             dest[0] = c0;
             dest[1] = END;
 
-#if defined (UTF8_DECODER_LOG)
             Log(INFO, "%X", dest[0]);
-#endif
             break;
         }
 
@@ -102,9 +99,7 @@ void utf8decode(const utf8chr_t* hex_str, utf8chr_t* dest)
             // end char
             dest[2] = END;
 
-#if defined (UTF8_DECODER_LOG)
             Log(INFO, "%X %X", dest[0], dest[1]);
-#endif
             break;
         }
 
@@ -129,9 +124,7 @@ void utf8decode(const utf8chr_t* hex_str, utf8chr_t* dest)
             // end char
             dest[3] = END;
 
-#if defined (UTF8_DECODER_LOG)
             Log(INFO, "%X %X %X", dest[0], dest[1], dest[2]);
-#endif
             break;
         }
 
@@ -164,9 +157,7 @@ void utf8decode(const utf8chr_t* hex_str, utf8chr_t* dest)
                 // end char
                 dest[4] = END;
 
-//#if defined (UTF8_DECODER_LOG)
                 Log(INFO, "%X %X %X %X", dest[0], dest[1], dest[2],  dest[3]);
-//#endif
             }
             else
             {
@@ -196,9 +187,7 @@ void utf8decode(const utf8chr_t* hex_str, utf8chr_t* dest)
                 // end char
                 dest[4] = END;
 
-#if defined (UTF8_DECODER_LOG)
                 Log(INFO, "%X %X %X %X", dest[0], dest[1], dest[2],  dest[3]);
-#endif
             }
 
             break;
@@ -221,9 +210,7 @@ bool utf8valid(const utf8chr_t *str)
 
     if (str == NULL)
     {
-#if defined (UTF8_DECODER_LOG)
         Log(WARNING, "Null string");
-#endif
         return UTF8_BAD_CHAR;
     }
 
@@ -313,9 +300,7 @@ int32_t utf8codepoint(const char* str)
     {
         if (str == NULL)
         {
-#if defined (UTF8_DECODER_LOG)
             Log(WARNING, "Null string");
-#endif
             return -1;
         }
 
@@ -347,9 +332,7 @@ int32_t utf8codepoint(const char* str)
             }
             else
             {
-#if defined (UTF8_DECODER_LOG)
                 Log(WARNING, "Invalid codepoint");
-#endif
                 return -1;
             }
         }
@@ -364,9 +347,7 @@ void utf8chr(const int32_t codepoint, utf8chr_t* dest)
     {
         dest[0] = codepoint;
         dest[1] = END;
-#if defined (UTF8_DECODER_LOG)
         Log(INFO, "%X", dest[0]);
-#endif
     }
     else if (codepoint > 0x007f && codepoint <= 0x07ff)
     {
@@ -379,9 +360,7 @@ void utf8chr(const int32_t codepoint, utf8chr_t* dest)
         dest[1] |= (codepoint & 0x3f);
 
         dest[2] = END;
-#if defined (UTF8_DECODER_LOG)
         Log(INFO, "%X %X", dest[0], dest[1]);
-#endif
     }
     else if (codepoint > 0x07ff && codepoint <= 0xffff)
     {
@@ -397,9 +376,7 @@ void utf8chr(const int32_t codepoint, utf8chr_t* dest)
         dest[2] |= (codepoint & 0xf);
 
         dest[3] = END;
-#if defined (UTF8_DECODER_LOG)
         Log(INFO, "%X %X %X", dest[0], dest[1], dest[2]);
-#endif
     }
     else if (codepoint > 0xffff && codepoint <= 0x10ffff)
     {
@@ -419,16 +396,12 @@ void utf8chr(const int32_t codepoint, utf8chr_t* dest)
         dest[3] |= (codepoint & 0xf);
 
         dest[4] = END;
-#if defined (UTF8_DECODER_LOG)
         Log(INFO, "%X %X %X %X", dest[0], dest[1], dest[2], dest[3]);
-#endif
     }
     else
     {
         *dest = END;
-#if defined (UTF8_DECODER_LOG)
         Log(WARNING, "String is empty, we are out of utf8 range !");
-#endif
     }
 }
 

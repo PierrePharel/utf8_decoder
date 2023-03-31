@@ -33,10 +33,6 @@
     typedef int32_t utf8_int32_t;
 #endif
 
-#if defined (UTF8_DECODER_LOG)
-    #include "logger.h"
-#endif
-
 typedef uint8_t utf8chr_t;
 
 #define LATIN_EXTRA_BEGIN 0xc0 // 0b110xxxxx

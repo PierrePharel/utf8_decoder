@@ -10,15 +10,19 @@
 
 #include <stdio.h>
 
-#define Log(type, ...)\
-{\
-    if (type == INFO)\
-        printf("%s%s: ", INFO_COLOR, __func__);\
-    else\
-        printf("%s%s: ", WARNING_COLOR, __func__);\
-    printf(__VA_ARGS__);\
-    printf("\n");\
-    printf(RESET_COLOR);\
-}
+#ifdef UTF8_DECODER_LOG
+    #define Log(type, ...)\
+    {\
+        if (type == INFO)\
+            printf("%s%s: ", INFO_COLOR, __func__);\
+        else\
+            printf("%s%s: ", WARNING_COLOR, __func__);\
+        printf(__VA_ARGS__);\
+        printf("\n");\
+        printf(RESET_COLOR);\
+    }
+#else
+    #define Log(type, ...)
+#endif
 
 #endif
