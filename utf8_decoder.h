@@ -25,7 +25,7 @@
 
 #include <stdbool.h>
 
-#if defined (_MSC_VER)
+#if defined(_MSC_VER) && (_MSC_VER < 1920)
     typedef __int32 utf8_int32_t;
     #pragma warning (disable: 4309)
 #else
