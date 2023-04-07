@@ -18,26 +18,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: recursive
+        submodules: true
 
     - name: Update compilers
       shell: bash
       run: |
-        sudo apt-get install -y clang-10 lld-10 libc++-10-dev libc++abi-10-dev clang-tools-10
+        sudo apt-get install clang lld libc++-dev libc++abi-dev clang-tools
 
     - name: Configure CMake
       shell: bash
       run: |
-        cd tests && mkdir build
-        cmake -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
+        cmake -Btests -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
 
     - name: Build
       shell: bash
       run: |
         cd tests
-        cmake --build build --config $BUILD_TYPE
+        cmake --build . --config $BUILD_TYPE
 
     - name: Test
       shell: bash
       run: |
-        ./tests/build/utf8d_test_c
+        ./tests/testc
