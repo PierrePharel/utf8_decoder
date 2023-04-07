@@ -30,7 +30,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
-        cmake . -Btests -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
+        cmake -Btests -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
 
     - name: Build
       shell: bash
