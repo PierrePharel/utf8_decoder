@@ -21,7 +21,6 @@
 
 #include <stddef.h>
 
-//#define UTF8_DECODER_LOG
 #include "utf8_decoder.h"
 #include "logger.h"
 

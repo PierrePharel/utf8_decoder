@@ -38,7 +38,7 @@ else ()
     message (WARNING "Unknown compiler !")
 endif ()
 
-option(LOGGER "Log mode activated" ON)
+option(LOGGER "Log mode activated" OFF)
 
 if(LOGGER)
   add_definitions(-DUTF8_DECODER_LOG)
