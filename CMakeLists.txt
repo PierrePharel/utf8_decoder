@@ -38,6 +38,12 @@ else ()
     message (WARNING "Unknown compiler !")
 endif ()
 
+option(LOGGER "Log mode activated" ON)
+
+if(LOGGER)
+  add_definitions(-DUTF8_DECODER_LOG)
+endif()
+
 set(LIB_DIR ..)
 
 set(TESTS tests/)
