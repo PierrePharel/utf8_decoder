@@ -8,8 +8,8 @@ on:
 
 env:
   BUILD_TYPE: Release
-  CC: gcc-8
-  CXX: g++-8
+  CC: gcc
+  CXX: g++
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
-        sudo apt-get -yq install g++-8 gcc-8
+        sudo apt-get -yq install g++ gcc
 
     - name: Configure CMake
       shell: bash
